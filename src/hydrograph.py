@@ -39,21 +39,21 @@ class Hydrograph():
         for coordinate in self.crosssections[cs_id].coordinates['0']:
             x.append(coordinate[0])
             y.append(coordinate[1])
-        plt.plot(x,y,'r.-',label="Initial")
+        plt.plot(x,y,'--', color='red', label="Initial",linewidth='2',marker='.')
 
         a = []
         b = []
         for coordinate in self.crosssections[cs_id].coordinates[self.peak]:
             a.append(coordinate[0])
             b.append(coordinate[1])
-        plt.plot(a,b,'g.-',label="Peak")
+        plt.plot(a,b,'--', color='limegreen',label="Peak",linewidth = '1.5',marker='.')
 
         c = []
         d = []
         for coordinate in self.crosssections[cs_id].coordinates[self.end]:
             c.append(coordinate[0])
             d.append(coordinate[1])
-        plt.plot(c,d,'b.-',label="End")
+        plt.plot(c,d,'--', color='blue', label="End",linewidth='1',marker='.')
 
         plt.xlabel("Station")
         plt.ylabel("Elevation")
