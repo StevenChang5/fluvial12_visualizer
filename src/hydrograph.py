@@ -12,7 +12,7 @@ class Hydrograph():
     def set_end(self, end):
         self.end = end
 
-    def plot_crossection(self, cs_id, time):
+    def plot_crossection(self, cs_id, time, savePlot=False):
         if time not in self.crosssections[cs_id].coordinates:
             print("Time not found in coordinates")
             return
@@ -21,5 +21,8 @@ class Hydrograph():
         for coordinate in self.crosssections[cs_id].coordinates[time]:
             x.append(coordinate[0])
             y.append(coordinate[1])
-        plt.plot(x ,y)
+        plt.title("Crosssection {} at time {}".format(cs_id, time))
+        plt.scatter(x ,y)
+        if(savePlot):
+            plt.savefig("cs{}t{}.png".format(cs_id,time))
         plt.show()
