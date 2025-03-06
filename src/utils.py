@@ -32,7 +32,7 @@ def read_file(path):
             subrow = row+1
             subline = lines[subrow].split()
             cs_id = int(subline[0])
-            time = subline[4]
+            time = subline[5]
             cs = hg.crosssections[cs_id]
             # Add coordinates @ time to crosssection object
             subrow += 4
@@ -40,4 +40,6 @@ def read_file(path):
                 subline = lines[subrow].split()
                 for j in range(0, len(subline),4):
                     cs.add_coordinates(subline[j+3], subline[j], time)
+                subrow += 1
+    print(hg.crosssections[2].coordinates['132.01'])
     return hg

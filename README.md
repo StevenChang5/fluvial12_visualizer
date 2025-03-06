@@ -23,11 +23,19 @@ Install dependencies
   pip install -r requirements.txt
 ```
 
-Go to the src directory and run the program (optionally add "-s" flag to save plot)
+Place the b4m.txt file into a "files" folder before running the program
 
-Place the b4m.txt file into the "files" folder before running the program
+Go to the src directory and run the program
+
 ```bash
   cd src
   python3 main.py -s {filename} {cross section number} {time}
 ```
 
+**Parameters:**
+- filename: name of file in files directory (include .txt suffix)
+- cross section number: ID of cross section to observe
+- time (optional): plot crosssection at time
+- '-s' (optional): save plot as a .png image
+
+Note that without time, the program will display the crosssection at the start, peak, and end time
