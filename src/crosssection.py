@@ -4,6 +4,7 @@ class Crosssection():
         self.name = name
         self.num_coordinates = int(num)
         self.coordinates = {}
+
     def add_coordinates(self, station, elevation, time):
         if time not in self.coordinates:
             self.coordinates[time] = []

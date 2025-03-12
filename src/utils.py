@@ -41,5 +41,30 @@ def read_file(path):
                 for j in range(0, len(subline),4):
                     cs.add_coordinates(subline[j+3], subline[j], time)
                 subrow += 1
-    print(hg.crosssections[2].coordinates['132.01'])
+        elif line[0] == 'TIME':
+            time = line[2]
+            subrow = row+5
+            for id in range(1,len(hg.crosssections)+1):
+                subline = lines[subrow].split()
+                syd = exponent_to_float(subline[10])
+                hg.add_SYD(float(subline[0]), syd, time)
+                subrow += 1
+
+
     return hg
+
+def exponent_to_float(exponent: str)->float:
+    num = exponent.split('E')
+    pos = True
+    if len(num) == 1:
+        return float(num)
+    else:
+        value = float(num[0])
+        exponent = num[1]
+        if exponent[0] == '-':
+            pos = False
+        exp_val = float(exponent[1:])
+        if(pos):
+            return float(value * (10 ** exp_val))
+        else:
+            return float(value * (10 ** -exp_val))

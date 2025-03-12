@@ -37,6 +37,9 @@ def main():
         hydrograph.plot_crossection(cs_num,time,savePlot)
     elif(len(values) == 2):
         hydrograph.plot_crosssection(cs_num,savePlot)
+
+    hydrograph.plot_SYD()
+    
     return
 
 if __name__ == "__main__":
