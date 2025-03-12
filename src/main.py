@@ -9,12 +9,15 @@ def main():
     cs_num = None
     time = None
     savePlot = False
+    showSYD = False
     values = []
    
     for i in range(1, len(sys.argv)):
         arg = sys.argv[i]
         if(arg == "-s"):
             savePlot = True
+        elif(arg == "-syd"):
+            showSYD = True
         else:
             values.append(arg)
 
@@ -38,8 +41,9 @@ def main():
     elif(len(values) == 2):
         hydrograph.plot_crosssection(cs_num,savePlot)
 
-    hydrograph.plot_SYD()
-    
+    if(showSYD):
+        hydrograph.plot_SYD()
+
     return
 
 if __name__ == "__main__":

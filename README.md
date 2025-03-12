@@ -29,7 +29,7 @@ Go to the src directory and run the program
 
 ```bash
   cd src
-  python3 main.py -s {filename} {cross section number} {time}
+  python3 main.py -s -syd {filename} {cross section number} {time}
 ```
 
 **Parameters:**
@@ -37,5 +37,6 @@ Go to the src directory and run the program
 - cross section number: ID of cross section to observe
 - time (optional): plot crosssection at time
 - '-s' (optional): save plot as a .png image
+- '-syd' (optional): plot sed. yield tons
 
 Note that without time, the program will display the crosssection at the start, peak, and end time
