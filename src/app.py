@@ -1,8 +1,6 @@
-from PyQt6.QtCore import QSize, Qt
+from PyQt6.QtCore import QSize
 from PyQt6.QtWidgets import (QMainWindow, QPushButton, QHBoxLayout, QVBoxLayout,
-                             QWidget, QToolBar, QStatusBar,QFileDialog, QComboBox,
-                             QLineEdit)
-from PyQt6.QtGui import QAction
+                             QWidget, QStatusBar,QFileDialog, QComboBox, QLineEdit)
 
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg
 from matplotlib.figure import Figure
@@ -14,7 +12,7 @@ class MainWindow(QMainWindow):
     def __init__(self):
         super().__init__()
         
-        self.setWindowTitle("My App")
+        self.setWindowTitle("FLUVIAL-12 Visualizer")
 
         self.upload = FileUpload(self)
         self.graph = GraphDisplay(self)
@@ -24,29 +22,12 @@ class MainWindow(QMainWindow):
         layout.addWidget(self.upload)
         layout.addStretch()
 
-        toolbar = QToolBar("My main toolbar")
-        self.addToolBar(toolbar)
-
-        button_action = QAction("Your button", self)
-        button_action.setStatusTip("This is your button")
-        button_action.triggered.connect(self.onMyToolBarButtonClick)
-        toolbar.addAction(button_action)
-
         self.setStatusBar(QStatusBar(self))
-
-        menu = self.menuBar()
-
-        file_menu = menu.addMenu("&File")
-        file_menu.addAction(button_action)
-
-        self.setFixedSize(QSize(600,450))
+        self.setFixedSize(QSize(600,425))
 
         widget = QWidget()
         widget.setLayout(layout)
         self.setCentralWidget(widget)
-
-    def onMyToolBarButtonClick(self, s):
-        print(self.upload.file.crosssections)
 
 class GraphDisplay(QWidget):
     def __init__(self,main_window):
@@ -74,8 +55,10 @@ class GraphDisplay(QWidget):
         self.section_combo.currentTextChanged.connect(self.change_graph)
         self.browse.clicked.connect(self.showFileDialog)
         self.save.clicked.connect(self.save_plot)
+
         self.task_combo.setEnabled(False)
         self.section_combo.setEnabled(False)
+        self.browse.setEnabled(False)
         self.save.setEnabled(False)
         
         col = QVBoxLayout()
@@ -93,6 +76,7 @@ class GraphDisplay(QWidget):
         layout.addStretch()
         self.setLayout(layout)
     
+    # Change task to display on graph
     def change_task(self):
         self.sc.axes.cla()
         if(self.task_combo.currentText() == "Sediment Yield Tons"):
@@ -108,6 +92,7 @@ class GraphDisplay(QWidget):
             self.sc.axes.plot(coordinates[2][0],coordinates[2][1],'b--',label="End",linewidth='1',marker='.')
         self.sc.draw()
 
+    # Change crosssection to display on graph
     def change_graph(self):
         self.sc.axes.cla()
         self.crosssection = self.section_combo.currentText()
@@ -117,6 +102,7 @@ class GraphDisplay(QWidget):
         self.sc.axes.plot(coordinates[2][0],coordinates[2][1],'b--',label="End",linewidth='1',marker='.')
         self.sc.draw()
 
+    # Open file dialog to allow user to select where to save graphs
     def showFileDialog(self):
         file_dialog = QFileDialog()
         file_dialog.setFileMode(QFileDialog.FileMode.Directory)
@@ -125,13 +111,16 @@ class GraphDisplay(QWidget):
         if file_dialog.exec():
             self.path = file_dialog.selectedFiles()[0]
             self.lineEdit.setText(self.path)
+            self.save.setEnabled(True)
             self.main_window.statusBar().showMessage("Save path set")
 
+    # Save graph to selected path
     def save_plot(self):
         if(self.task_combo.currentText() == "Sediment Yield Tons"):
             self.main_window.upload.file.plot_SYD(graph=False,save_plot=True,path=self.path)
         elif(self.task_combo.currentText() == "Station/Elevation Over Time"):
             self.main_window.upload.file.plot_crosssection(int(self.crosssection),graph=False,save_plot=True,path=self.path)
+        self.main_window.statusBar().showMessage("File saved to {}".format(self.path))
         
 
 class MplCanvas(FigureCanvasQTAgg):
@@ -165,7 +154,8 @@ class FileUpload(QWidget):
 
         self.file = None
         self.fname = None
-        
+
+    # Open file dialog to allow user to select FLUVIAL-12 output
     def showFileDialog(self):
         self.fname = QFileDialog.getOpenFileName(self, 'Open file', '', 
                                            'All Files (*);;Text Files (*.txt)')
@@ -173,13 +163,13 @@ class FileUpload(QWidget):
             self.lineEdit.setText(self.fname[0])
             self.main_window.statusBar().showMessage("")
     
+    # Upload FLUVIAL-12 output for processing
     def upload_file(self):
         if self.fname[0]:
             self.file = read_file(self.fname[0])
-            print(self.file.crosssections[1].coordinates.keys())
-            self.main_window.statusBar().showMessage("Set!")
+            self.main_window.statusBar().showMessage("File uploaded")
             keys = [str(x) for x in self.file.crosssections.keys()]
             self.main_window.graph.task_combo.setEnabled(True)
             self.main_window.graph.section_combo.setEnabled(True)
-            self.main_window.graph.save.setEnabled(True)
+            self.main_window.graph.browse.setEnabled(True)
             self.main_window.graph.section_combo.addItems(keys[1:-1])
