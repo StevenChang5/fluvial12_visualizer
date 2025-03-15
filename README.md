@@ -1,7 +1,10 @@
-# Cross Section Visualizer
+# FLUVIAL-12 Visualizer
 
 The purpose of this repository is to visualize the output of the FLUVIAL-12 model. This program enables users to easily view hydrograph cross sections at a user-specified time. 
 
+<p align="center">
+    <img src="figures/gui.png" alt="Application GUI" width="540"/>
+</p>
 
 ## Run Locally
 
@@ -29,14 +32,5 @@ Go to the src directory and run the program
 
 ```bash
   cd src
-  python3 main.py -s -syd {filename} {cross section number} {time}
+  python3 main.py
 ```
-
-**Parameters:**
-- filename: name of file in files directory (include .txt suffix)
-- cross section number: ID of cross section to observe
-- time (optional): plot crosssection at time
-- '-s' (optional): save plot as a .png image
-- '-syd' (optional): plot sed. yield tons
-
-Note that without time, the program will display the crosssection at the start, peak, and end time
