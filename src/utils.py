@@ -2,7 +2,7 @@ from crosssection import Crosssection
 from hydrograph import Hydrograph
 import math
 
-def read_file(path):
+def read_file(path)->Hydrograph:
     file = open(path)
     id = 1
     hg = Hydrograph()

@@ -1,7 +1,8 @@
 import os
 import sys
 import matplotlib.pyplot as plt
-
+from PyQt6.QtWidgets import QApplication, QMainWindow
+from app import MainWindow
 import utils
 
 def main():
@@ -47,4 +48,9 @@ def main():
     return
 
 if __name__ == "__main__":
+    app = QApplication(sys.argv)
+    window = MainWindow()
+    window.show()
+    
+    app.exec()
     main()
