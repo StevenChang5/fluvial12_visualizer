@@ -2,7 +2,7 @@ from crosssection import Crosssection
 from hydrograph import Hydrograph
 import math
 
-def read_file(path):
+def read_file(path)->Hydrograph:
     file = open(path)
     id = 1
     hg = Hydrograph()
@@ -49,8 +49,6 @@ def read_file(path):
                 syd = exponent_to_float(subline[10])
                 hg.add_SYD(float(subline[0]), syd, time)
                 subrow += 1
-
-
     return hg
 
 def exponent_to_float(exponent: str)->float:
