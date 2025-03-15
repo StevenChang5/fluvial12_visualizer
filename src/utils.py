@@ -49,8 +49,6 @@ def read_file(path)->Hydrograph:
                 syd = exponent_to_float(subline[10])
                 hg.add_SYD(float(subline[0]), syd, time)
                 subrow += 1
-
-
     return hg
 
 def exponent_to_float(exponent: str)->float:

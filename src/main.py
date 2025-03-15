@@ -26,7 +26,7 @@ def main():
         print("Invalid input, please use format: \n python3 main.py [filename] [cross section number] [time]")
 
     if len(values) == 3:
-        # Given time paramter, plot that time only
+        # Given time parameter, plot that time only
         file = values[0]
         cs_num = int(values[1])
         time = values[2]

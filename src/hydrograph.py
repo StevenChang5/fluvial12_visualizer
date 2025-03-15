@@ -39,7 +39,7 @@ class Hydrograph():
             plt.savefig("cs{}t{}.png".format(cs_id,time))
         plt.show()
     
-    def plot_crosssection(self, cs_id, save_plot=False):
+    def plot_crosssection(self, cs_id, save_plot=False, graph=True, path=None):
         plt.title("Crosssection {}".format(cs_id))
 
         x = []
@@ -47,30 +47,34 @@ class Hydrograph():
         for coordinate in self.crosssections[cs_id].coordinates['0']:
             x.append(coordinate[0])
             y.append(coordinate[1])
-        plt.plot(x,y,'--', color='red', label="Initial",linewidth='2',marker='.')
 
         a = []
         b = []
         for coordinate in self.crosssections[cs_id].coordinates[self.peak]:
             a.append(coordinate[0])
             b.append(coordinate[1])
-        plt.plot(a,b,'--', color='limegreen',label="Peak",linewidth = '1.5',marker='.')
 
         c = []
         d = []
         for coordinate in self.crosssections[cs_id].coordinates[self.end]:
             c.append(coordinate[0])
             d.append(coordinate[1])
-        plt.plot(c,d,'--', color='blue', label="End",linewidth='1',marker='.')
 
+        
+        plt.plot(x,y,'--', color='red', label="Initial",linewidth='2',marker='.')
+        plt.plot(a,b,'--', color='limegreen',label="Peak",linewidth = '1.5',marker='.')
+        plt.plot(c,d,'--', color='blue', label="End",linewidth='1',marker='.')
         plt.xlabel("Station")
         plt.ylabel("Elevation")
         plt.legend()
         if(save_plot):
-            plt.savefig("cs{}.png".format(cs_id))
-        plt.show()
+            plt.savefig(path + "/cs{}.png".format(cs_id))
+        if(graph):
+            plt.show()
+        plt.cla()
+        return [[x,y],[a,b],[c,d]]
     
-    def plot_SYD(self, save_plot=False):
+    def plot_SYD(self, save_plot=False, graph=True, path=None):
         plt.title("Sediment Yield Tons")
         
         x = []
@@ -91,5 +95,8 @@ class Hydrograph():
         plt.ylabel("Sed. Yield Tons")
         plt.legend()
         if(save_plot):
-            plt.savefig("syd.png")
-        plt.show()
+            plt.savefig(path + "/syd.png")
+        if(graph):
+            plt.show()
+        plt.cla()
+        return [[x,y],[a,b]]
