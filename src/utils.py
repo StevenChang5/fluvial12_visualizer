@@ -46,7 +46,7 @@ def read_file(path)->Hydrograph:
             subrow = row+5
             for id in range(1,len(hg.crosssections)+1):
                 subline = lines[subrow].split()
-                syd = exponent_to_float(subline[10])
+                syd = exponent_to_float(subline[-1])
                 hg.add_SYD(float(subline[0]), syd, time)
                 subrow += 1
     return hg
