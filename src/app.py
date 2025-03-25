@@ -1,6 +1,7 @@
 from PyQt6.QtCore import QSize
 from PyQt6.QtWidgets import (QMainWindow, QPushButton, QHBoxLayout, QVBoxLayout,
-                             QWidget, QStatusBar,QFileDialog, QComboBox, QLineEdit)
+                             QWidget, QStatusBar,QFileDialog, QComboBox, QLineEdit,
+                             QTabWidget, QLabel,QFormLayout)
 
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg
 from matplotlib.figure import Figure
@@ -13,26 +14,56 @@ class MainWindow(QMainWindow):
         super().__init__()
         
         self.setWindowTitle("FLUVIAL-12 Visualizer")
+        layout = QVBoxLayout()
 
-        self.upload = FileUpload(self)
-        self.graph = GraphDisplay(self)
+        self.tab_widget = TaskTabs(self)
+        layout.addWidget(self.tab_widget)
+
+        self.setStatusBar(QStatusBar(self))
+        self.setFixedSize(QSize(600,425))
+
+        # widget = QWidget()
+        # widget.setLayout(layout)
+        self.setCentralWidget(self.tab_widget)
+
+class TaskTabs(QTabWidget):
+    def __init__(self, main_window):
+        super().__init__()
+        self.main_window = main_window
+        self.tab1 = QWidget()
+        self.tab2 = QWidget()
+
+        self.addTab(self.tab1, "Hello")
+        self.addTab(self.tab2, "World")
+
+        self.tab1UI()
+        self.tab2UI()
+
+        self.setWindowTitle("Tab Demo")
+
+    def tab1UI(self):
+        self.setTabText(0, "Soil Yield Deposition")
+        self.upload = FileUpload(self.main_window, self)
+        self.graph = GraphDisplay(self.main_window, self)
 
         layout = QVBoxLayout()
         layout.addWidget(self.graph)
         layout.addWidget(self.upload)
         layout.addStretch()
-
-        self.setStatusBar(QStatusBar(self))
-        self.setFixedSize(QSize(600,425))
-
-        widget = QWidget()
-        widget.setLayout(layout)
-        self.setCentralWidget(widget)
+        self.tab1.setLayout(layout)
+    def tab2UI(self):
+        layout = QFormLayout()
+        sex = QHBoxLayout()
+        layout.addRow(QLabel("Sex"), sex)
+        layout.addRow("Date of Birth", QLineEdit())
+        self.setTabText(1, "Personal Details")
+        self.tab2.setLayout(layout)
 
 class GraphDisplay(QWidget):
-    def __init__(self,main_window):
+    def __init__(self,main_window, tab):
         super().__init__()
         self.main_window = main_window
+        self.tab = tab
         self.sc = MplCanvas(self, width=3, height=4, dpi=100)
         self.sc.axes.plot([0,1,2,3,4],[10,1,20,3,40])
         self.sc.setFixedSize(QSize(400,300))
@@ -81,12 +112,12 @@ class GraphDisplay(QWidget):
         self.sc.axes.cla()
         if(self.task_combo.currentText() == "Sediment Yield Tons"):
             self.section_combo.setEnabled(False)
-            coordinates = self.main_window.upload.file.plot_SYD(graph=False)
+            coordinates = self.tab.upload.file.plot_SYD(graph=False)
             self.sc.axes.plot(coordinates[0][0],coordinates[0][1],'--', color='red', label="Peak",linewidth='2',marker='.')
             self.sc.axes.plot(coordinates[1][0],coordinates[1][1],'--', color='limegreen',label="End",linewidth = '1.5',marker='.')
         elif(self.task_combo.currentText() == "Station/Elevation Over Time"):
             self.section_combo.setEnabled(True)
-            coordinates = self.main_window.upload.file.plot_crosssection(int(self.crosssection),graph=False)
+            coordinates = self.tab.upload.file.plot_crosssection(int(self.crosssection),graph=False)
             self.sc.axes.plot(coordinates[0][0],coordinates[0][1],'r--',label="Initial",linewidth='2',marker='.')
             self.sc.axes.plot(coordinates[1][0],coordinates[1][1],'--',color='limegreen',label="Peak",linewidth = '1.5',marker='.')
             self.sc.axes.plot(coordinates[2][0],coordinates[2][1],'b--',label="End",linewidth='1',marker='.')
@@ -96,7 +127,7 @@ class GraphDisplay(QWidget):
     def change_graph(self):
         self.sc.axes.cla()
         self.crosssection = self.section_combo.currentText()
-        coordinates = self.main_window.upload.file.plot_crosssection(int(self.crosssection),graph=False)
+        coordinates = self.tab.upload.file.plot_crosssection(int(self.crosssection),graph=False)
         self.sc.axes.plot(coordinates[0][0],coordinates[0][1],'r--',label="Initial",linewidth='2',marker='.')
         self.sc.axes.plot(coordinates[1][0],coordinates[1][1],'--',color='limegreen',label="Peak",linewidth = '1.5',marker='.')
         self.sc.axes.plot(coordinates[2][0],coordinates[2][1],'b--',label="End",linewidth='1',marker='.')
@@ -117,9 +148,9 @@ class GraphDisplay(QWidget):
     # Save graph to selected path
     def save_plot(self):
         if(self.task_combo.currentText() == "Sediment Yield Tons"):
-            self.main_window.upload.file.plot_SYD(graph=False,save_plot=True,path=self.path)
+            self.tab.upload.file.plot_SYD(graph=False,save_plot=True,path=self.path)
         elif(self.task_combo.currentText() == "Station/Elevation Over Time"):
-            self.main_window.upload.file.plot_crosssection(int(self.crosssection),graph=False,save_plot=True,path=self.path)
+            self.tab.upload.file.plot_crosssection(int(self.crosssection),graph=False,save_plot=True,path=self.path)
         self.main_window.statusBar().showMessage("File saved to {}".format(self.path))
         
 
@@ -130,9 +161,10 @@ class MplCanvas(FigureCanvasQTAgg):
         super().__init__(fig)
 
 class FileUpload(QWidget):
-    def __init__(self, main_window):
+    def __init__(self, main_window, tab):
         super().__init__()
         self.main_window = main_window
+        self.tab = tab
         self.lineEdit = QLineEdit()
         self.browse = QPushButton('Browse')
         self.upload = QPushButton('Upload')
@@ -169,7 +201,7 @@ class FileUpload(QWidget):
             self.file = read_file(self.fname[0])
             self.main_window.statusBar().showMessage("File uploaded")
             keys = [str(x) for x in self.file.crosssections.keys()]
-            self.main_window.graph.task_combo.setEnabled(True)
-            self.main_window.graph.section_combo.setEnabled(True)
-            self.main_window.graph.browse.setEnabled(True)
-            self.main_window.graph.section_combo.addItems(keys[1:-1])
+            self.tab.graph.task_combo.setEnabled(True)
+            self.tab.graph.section_combo.setEnabled(True)
+            self.tab.graph.browse.setEnabled(True)
+            self.tab.graph.section_combo.addItems(keys[1:-1])
