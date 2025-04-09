@@ -2,6 +2,8 @@
 #define SYD_H
 
 #include <QWidget>
+#include <QChartView>
+#include <QLineSeries>
 #include <QPushButton>
 #include <QFormLayout>
 
@@ -15,6 +17,8 @@ class SYDWindow : public QWidget{
         QString fileName;
         QPushButton* getFileButton;
         QFormLayout *formGroupLayout;
+        QLineSeries* graphData;
+        QChartView* chartView;
     signals:
         void counterReached();
     private slots:

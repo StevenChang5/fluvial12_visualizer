@@ -4,15 +4,18 @@ project(QtTest LANGUAGES CXX)
 set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-find_package(Qt6 COMPONENTS Widgets REQUIRED)
+find_package(Qt6 COMPONENTS Widgets REQUIRED COMPONENTS Charts)
 
 qt6_wrap_cpp(MOC_SOURCES syd.h)
+
 
 add_executable(main
     main.cpp
     syd.cpp
+    hydrograph.cpp
     ${MOC_SOURCES}
 )
 
 target_link_libraries(main Qt6::Widgets)
+target_link_libraries(main Qt6::Charts)
 target_include_directories(main PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})

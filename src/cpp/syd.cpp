@@ -1,4 +1,6 @@
+#include "hydrograph.h"
 #include "syd.h"
+
 #include <QApplication>
 #include <QProgressBar>
 #include <QSlider>
@@ -15,7 +17,11 @@ SYDWindow::SYDWindow(QWidget *parent) : QWidget(parent){
 
     QVBoxLayout *main_layout = new QVBoxLayout(this);
 
-    getFileButton = new QPushButton("Open File", this);
+    chartView = new QChartView(this);
+    graphData = new QLineSeries();
+    chartView->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+
+    getFileButton = new QPushButton("Upload File", this);
     connect(getFileButton, SIGNAL(clicked()), this, SLOT(getFileButtonClicked()));
     
 
@@ -29,7 +35,7 @@ SYDWindow::SYDWindow(QWidget *parent) : QWidget(parent){
     formGroupLayout->addRow(new QLabel(tr("Save File:")), new QLineEdit);
     formGroupBox->setLayout(formGroupLayout);
 
-    main_layout->addStretch();
+    main_layout->addWidget(chartView);
     main_layout->addWidget(formGroupBox);
 
 }
@@ -52,5 +58,16 @@ void SYDWindow::getFileButtonClicked(){
         QLayoutItem* lineEdit = formGroupLayout->itemAt(0,QFormLayout::FieldRole);
         QLineEdit* edit = qobject_cast<QLineEdit*>(lineEdit->widget());
         edit->setText(fileName);
+        HydrographFile hfile(fileName.toStdString());
+        Crosssection* cs = hfile.sections[2];
+        auto coor = cs->get_coor("0");
+        qDebug() << "Output:";
+        for(int i = 0; i < coor.size(); i++){
+            qDebug() << std::get<0>(coor[i]) << " " << std::get<1>(coor[i]);
+            graphData->append(std::get<0>(coor[i]), std::get<1>(coor[i]));
+        }
+        chartView->chart()->addSeries(graphData);
+        chartView->chart()->createDefaultAxes();
+        chartView->chart()->legend()->hide();
     }
 }
