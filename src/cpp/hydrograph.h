@@ -28,6 +28,14 @@ class Crosssection{
             return num_coor;
         }
 
+        inline const int get_id(){
+            return id;
+        }
+
+        inline const std::string get_name(){
+            return name;
+        }
+
     private:
         int id;
         std::string name;
@@ -41,7 +49,7 @@ class HydrographFile{
     public:
         HydrographFile(std::string file_path);
         ~HydrographFile();
-        
+
         // Key: crosssection ID, Value: crosssection object
         std::unordered_map<int, Crosssection*> sections;
 
