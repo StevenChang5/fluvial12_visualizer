@@ -19,20 +19,25 @@ class SYDWindow : public QWidget{
     public:
         explicit SYDWindow(QWidget *parent = 0);
     private:
-        int m_counter;
         HydrographFile* hfile;
-        QPushButton* m_button;
-        QString fileName;
-        QPushButton* getFileButton;
-        QFormLayout* formGroupLayout;
+        QString fname;
+
+        // Upload/Download Group
+        QFormLayout* load_group_layout;
+        QPushButton* upload_button;
+        
+        // Viewer Group
         QHBoxLayout* viewer_layout;
-        QVBoxLayout* control_layout;
+        QValueAxis* axis_x;
+        QValueAxis* axis_y;
         QLineSeries* chart_data;
         QChartView* chart_view;
         QChart* chart;
+        QVBoxLayout* control_layout;
+        
+        // Control Group
         QComboBox* cs_selector;
-        QValueAxis* axis_x;
-        QValueAxis* axis_y;
+        
     signals:
         void counterReached();
         void fileUploaded();

@@ -19,24 +19,27 @@ SYDWindow::SYDWindow(QWidget *parent) : QWidget(parent){
     QVBoxLayout *main_layout = new QVBoxLayout(this);
 
     // Upload and save file controls
-    getFileButton = new QPushButton("Upload File", this);
-    connect(getFileButton, SIGNAL(clicked()), this, SLOT(getFileButtonClicked()));
-    QGroupBox* formGroupBox = new QGroupBox(tr("Upload/Save Files"), this);
-    QLineEdit* getFileLineEdit = new QLineEdit(this);
-    getFileLineEdit->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
-    formGroupLayout = new QFormLayout(this);
-    formGroupLayout->setFieldGrowthPolicy(QFormLayout::AllNonFixedFieldsGrow);
-    formGroupLayout->addRow(getFileButton, getFileLineEdit);
-    formGroupLayout->addRow(new QLabel(tr("Save File:")), new QLineEdit);
-    formGroupBox->setLayout(formGroupLayout);
+    QGroupBox* load_group = new QGroupBox(tr("Upload/Save Files"), this);
+    upload_button = new QPushButton("Upload File", this);
+    connect(upload_button, SIGNAL(clicked()), this, SLOT(getFileButtonClicked()));
+    QLineEdit* upload_line_edit = new QLineEdit(this);
+    upload_line_edit->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
+
+    load_group_layout = new QFormLayout(this);
+    load_group_layout->setFieldGrowthPolicy(QFormLayout::AllNonFixedFieldsGrow);
+    load_group_layout->addRow(upload_button, upload_line_edit);
+    load_group_layout->addRow(new QLabel(tr("Save File:")), new QLineEdit);
+    load_group->setLayout(load_group_layout);
 
     // Viewer and controls
+    
+    chart_data = new QLineSeries();
     chart_view = new QChartView(this);
     chart = new QChart();
-    chart_data = new QLineSeries();
     chart->addSeries(chart_data);
-    chart_view->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
     chart_view->setChart(chart);
+    chart_view->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+
     axis_x = new QValueAxis();
     axis_y = new QValueAxis();
     chart->addAxis(axis_x, Qt::AlignBottom);
@@ -44,7 +47,6 @@ SYDWindow::SYDWindow(QWidget *parent) : QWidget(parent){
     chart->addAxis(axis_y, Qt::AlignLeft);
     chart_data->attachAxis(axis_y);
     
-    viewer_layout = new QHBoxLayout(this);
     control_layout = new QVBoxLayout(this);
     cs_selector = new QComboBox(this);
     cs_selector->setEnabled(false);
@@ -52,21 +54,23 @@ SYDWindow::SYDWindow(QWidget *parent) : QWidget(parent){
     control_layout->addStretch();
     connect(this, SIGNAL(fileUploaded()), this, SLOT(getFileUploaded()));
     connect(cs_selector, SIGNAL(currentTextChanged(const QString&)), this, SLOT(csSelectorChanged(const QString&)));
+    
+    viewer_layout = new QHBoxLayout(this);
     viewer_layout->addWidget(chart_view);
     viewer_layout->addLayout(control_layout);
 
     main_layout->addLayout(viewer_layout);
-    main_layout->addWidget(formGroupBox);
+    main_layout->addWidget(load_group);
 
 }
 
 void SYDWindow::getFileButtonClicked(){
-    fileName = QFileDialog::getOpenFileName(this,"Select a file", "","Text Files (*.txt);;All Files (*)" );
-    if(!fileName.isEmpty()){
-        QLayoutItem* lineEdit = formGroupLayout->itemAt(0,QFormLayout::FieldRole);
+    fname = QFileDialog::getOpenFileName(this,"Select a file", "","Text Files (*.txt);;All Files (*)" );
+    if(!fname.isEmpty()){
+        QLayoutItem* lineEdit = load_group_layout->itemAt(0,QFormLayout::FieldRole);
         QLineEdit* edit = qobject_cast<QLineEdit*>(lineEdit->widget());
-        edit->setText(fileName);
-        hfile = new HydrographFile(fileName.toStdString());
+        edit->setText(fname);
+        hfile = new HydrographFile(fname.toStdString());
         emit fileUploaded();
     }
 }
