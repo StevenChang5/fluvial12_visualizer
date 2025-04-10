@@ -52,12 +52,22 @@ class HydrographFile{
 
         // Key: crosssection ID, Value: crosssection object
         std::unordered_map<int, Crosssection*> sections;
+        std::string get_approx_peak();
+        std::string get_approx_end();
 
     private:
-        void set_peak(std::string peak_time);
-        void set_end(std::string end_time);
-        std::string end;
+        /* 
+            NOTE: 'peak' is the value recorded on line G1, 
+                'approx_peak' is the closest time in the ID sections
+                of the hydrograph file.
+                Same for 'end' and 'approx_end.'
+        */ 
         std::string peak;
+        std::string approx_peak; 
+        std::string end;
+        std::string approx_end;
+        std::string closest_to_peak(const std::string& time1, const std::string& time2);
+        std::string closest_to_end(const std::string& time1, const std::string& time2);
 };
 
 #endif

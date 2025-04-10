@@ -32,20 +32,27 @@ SYDWindow::SYDWindow(QWidget *parent) : QWidget(parent){
     load_group->setLayout(load_group_layout);
 
     // Viewer and controls
-    
-    chart_data = new QLineSeries();
+    chart_data_initial = new QLineSeries();
+    chart_data_peak = new QLineSeries();
+    chart_data_end = new QLineSeries();
     chart_view = new QChartView(this);
     chart = new QChart();
-    chart->addSeries(chart_data);
+    chart->addSeries(chart_data_initial);
+    chart->addSeries(chart_data_peak);
+    chart->addSeries(chart_data_end);
     chart_view->setChart(chart);
     chart_view->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
 
     axis_x = new QValueAxis();
     axis_y = new QValueAxis();
     chart->addAxis(axis_x, Qt::AlignBottom);
-    chart_data->attachAxis(axis_x);
+    chart_data_initial->attachAxis(axis_x);
+    chart_data_peak->attachAxis(axis_x);
+    chart_data_end->attachAxis(axis_x);
     chart->addAxis(axis_y, Qt::AlignLeft);
-    chart_data->attachAxis(axis_y);
+    chart_data_initial->attachAxis(axis_y);
+    chart_data_peak->attachAxis(axis_y);
+    chart_data_end->attachAxis(axis_y);
     
     control_layout = new QVBoxLayout(this);
     cs_selector = new QComboBox(this);
@@ -90,24 +97,45 @@ void SYDWindow::csSelectorChanged(const QString& text){
     int id = stoi(data.substr(idx_left, idx_right-idx_left));
 
     Crosssection* cs = hfile->sections[id];
-
-    chart_data->clear();
-    auto coor = cs->get_coor("0");
+    chart_data_initial->clear();
+    chart_data_peak->clear();
+    chart_data_end->clear();
+    auto coor_initial = cs->get_coor("0");
+    auto coor_peak = cs->get_coor(hfile->get_approx_peak());
+    auto coor_end = cs->get_coor(hfile->get_approx_end());
     int min_y = INT_MAX;
     int max_y = INT_MIN;
     int min_x = INT_MAX;
     int max_x = INT_MIN;
-    for(int i = 0; i < coor.size(); i++){
-        int x = std::get<0>(coor[i]);
-        int y = std::get<1>(coor[i]);
-        min_x = std::min(x, min_x);
-        max_x = std::max(x, max_x);
-        min_y = std::min(y, min_y);
-        max_y = std::max(y, max_y);
-        chart_data->append(x, y);
+    qDebug() << hfile->get_approx_peak() << " " << hfile->get_approx_end();
+    for(int i = 0; i < coor_initial.size(); i++){
+        int x_initial = std::get<0>(coor_initial[i]);
+        int y_initial = std::get<1>(coor_initial[i]);
+        min_x = std::min(x_initial, min_x);
+        max_x = std::max(x_initial, max_x);
+        min_y = std::min(y_initial, min_y);
+        max_y = std::max(y_initial, max_y);
+        chart_data_initial->append(x_initial, y_initial);
+        
+    }
+    for(int i = 0; i < coor_peak.size(); i++){
+        int x_peak = std::get<0>(coor_peak[i]);
+        int y_peak = std::get<1>(coor_peak[i]);
+        min_x = std::min(x_peak, min_x);
+        max_x = std::max(x_peak, max_x);
+        min_y = std::min(y_peak, min_y);
+        max_y = std::max(y_peak, max_y);
+        chart_data_peak->append(x_peak, y_peak);
+    }
+    for(int i = 0; i < coor_end.size(); i++){
+        int x_end = std::get<0>(coor_end[i]);
+        int y_end = std::get<1>(coor_end[i]);
+        min_x = std::min(x_end, min_x);
+        max_x = std::max(x_end, max_x);
+        min_y = std::min(y_end, min_y);
+        max_y = std::max(y_end, max_y);
+        chart_data_end->append(x_end, y_end);
     }
     axis_x->setRange(min_x, max_x);
     axis_y->setRange(min_y, max_y);
-    
-    chart->legend()->hide();
 }

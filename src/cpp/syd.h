@@ -30,7 +30,9 @@ class SYDWindow : public QWidget{
         QHBoxLayout* viewer_layout;
         QValueAxis* axis_x;
         QValueAxis* axis_y;
-        QLineSeries* chart_data;
+        QLineSeries* chart_data_initial;
+        QLineSeries* chart_data_peak;
+        QLineSeries* chart_data_end;
         QChartView* chart_view;
         QChart* chart;
         QVBoxLayout* control_layout;
