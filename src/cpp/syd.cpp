@@ -3,8 +3,6 @@
 #include <string>
 
 #include <QApplication>
-#include <QProgressBar>
-#include <QSlider>
 #include <QVBoxLayout>
 #include <QGroupBox>
 #include <QLabel>
@@ -33,13 +31,29 @@ SYDWindow::SYDWindow(QWidget *parent) : QWidget(parent){
 
     // Viewer and controls
     chart_data_initial = new QLineSeries();
+    chart_data_initial->setName(QString("Initial"));
+    chart_data_initial->setPointsVisible(true);
     chart_data_peak = new QLineSeries();
+    chart_data_peak->setName(QString("Peak"));
+    chart_data_peak->setPointsVisible(true);
     chart_data_end = new QLineSeries();
+    chart_data_end->setName(QString("End"));
+    chart_data_end->setPointsVisible(true);
+
+    chart_syd_peak = new QLineSeries();
+    chart_syd_peak->setName(QString("SYD Peak"));
+    chart_syd_peak->setVisible(false);
+    chart_syd_end = new QLineSeries();
+    chart_syd_end->setName(QString("SYD End"));
+    chart_syd_end->setVisible(false);
+
     chart_view = new QChartView(this);
     chart = new QChart();
     chart->addSeries(chart_data_initial);
     chart->addSeries(chart_data_peak);
     chart->addSeries(chart_data_end);
+    chart->addSeries(chart_syd_peak);
+    chart->addSeries(chart_syd_end);
     chart_view->setChart(chart);
     chart_view->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
 
@@ -49,19 +63,30 @@ SYDWindow::SYDWindow(QWidget *parent) : QWidget(parent){
     chart_data_initial->attachAxis(axis_x);
     chart_data_peak->attachAxis(axis_x);
     chart_data_end->attachAxis(axis_x);
+    chart_syd_peak->attachAxis(axis_x);
+    chart_syd_end->attachAxis(axis_x);
     chart->addAxis(axis_y, Qt::AlignLeft);
     chart_data_initial->attachAxis(axis_y);
     chart_data_peak->attachAxis(axis_y);
     chart_data_end->attachAxis(axis_y);
+    chart_syd_peak->attachAxis(axis_y);
+    chart_syd_end->attachAxis(axis_y);
     
     control_layout = new QVBoxLayout(this);
+    cs_radio = new QRadioButton("Crosssection",this);
+    syd_radio = new QRadioButton("Sediment Yield Tons",this);
     cs_selector = new QComboBox(this);
     cs_selector->setEnabled(false);
-    control_layout->addWidget(cs_selector);
+    control_layout->addWidget(new QLabel("Functions:",this));
+    control_layout->addWidget(cs_radio);
+    control_layout->addWidget(syd_radio);
     control_layout->addStretch();
+    control_layout->addWidget(cs_selector);
     connect(this, SIGNAL(fileUploaded()), this, SLOT(getFileUploaded()));
     connect(cs_selector, SIGNAL(currentTextChanged(const QString&)), this, SLOT(csSelectorChanged(const QString&)));
-    
+    connect(cs_radio, SIGNAL(toggled(bool)), this, SLOT(sydToCs()));
+    connect(syd_radio,SIGNAL(toggled(bool)), this, SLOT(csToSyd()));
+
     viewer_layout = new QHBoxLayout(this);
     viewer_layout->addWidget(chart_view);
     viewer_layout->addLayout(control_layout);
@@ -79,6 +104,7 @@ void SYDWindow::getFileButtonClicked(){
         edit->setText(fname);
         hfile = new HydrographFile(fname.toStdString());
         emit fileUploaded();
+        cs_radio->toggle();
     }
 }
 
@@ -103,11 +129,10 @@ void SYDWindow::csSelectorChanged(const QString& text){
     auto coor_initial = cs->get_coor("0");
     auto coor_peak = cs->get_coor(hfile->get_approx_peak());
     auto coor_end = cs->get_coor(hfile->get_approx_end());
-    int min_y = INT_MAX;
-    int max_y = INT_MIN;
-    int min_x = INT_MAX;
-    int max_x = INT_MIN;
-    qDebug() << hfile->get_approx_peak() << " " << hfile->get_approx_end();
+    min_y = INT_MAX;
+    max_y = INT_MIN;
+    min_x = INT_MAX;
+    max_x = INT_MIN;
     for(int i = 0; i < coor_initial.size(); i++){
         int x_initial = std::get<0>(coor_initial[i]);
         int y_initial = std::get<1>(coor_initial[i]);
@@ -136,6 +161,48 @@ void SYDWindow::csSelectorChanged(const QString& text){
         max_y = std::max(y_end, max_y);
         chart_data_end->append(x_end, y_end);
     }
+    axis_x->setRange(min_x, max_x);
+    axis_y->setRange(min_y, max_y);
+}
+
+void SYDWindow::sydSelectorChanged(const QString& text){
+    std::string data = text.toStdString();
+}
+
+void SYDWindow::csToSyd(){
+    cs_selector->setEnabled(false);
+    chart_data_initial->setVisible(false);
+    chart_data_peak->setVisible(false);
+    chart_data_end->setVisible(false);
+    chart_syd_peak->setVisible(true);
+    chart_syd_end->setVisible(true);
+    chart_syd_peak->setPointsVisible(true);
+    chart_syd_end->setPointsVisible(true);
+
+    chart_syd_peak->clear();
+    chart_syd_end->clear();
+    float y = INT_MIN;
+    for(int id = 1; id < hfile->sections.size()+1; id++){
+        Crosssection* cs = hfile->sections[id];
+        float peak = cs->getSyd(hfile->get_approx_peak());
+        float end = cs->getSyd(hfile->get_approx_end());
+        chart_syd_peak->append(stof(cs->get_name()),peak);
+        chart_syd_end->append(stof(cs->get_name()),end);
+        y = std::max(y, std::max(peak, end));
+    }
+    axis_x->setRange(stof(hfile->sections[1]->get_name()), stof(hfile->sections[hfile->sections.size()]->get_name()));
+    axis_y->setRange(0, y);
+}
+
+void SYDWindow::sydToCs(){
+    cs_selector->setEnabled(true);
+    chart_data_initial->setVisible(true);
+    chart_data_peak->setVisible(true);
+    chart_data_end->setVisible(true);
+    chart_syd_peak->setVisible(false);
+    chart_syd_end->setVisible(false);
+    chart_syd_peak->setPointsVisible(false);
+    chart_syd_end->setPointsVisible(false);
     axis_x->setRange(min_x, max_x);
     axis_y->setRange(min_y, max_y);
 }

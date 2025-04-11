@@ -20,6 +20,15 @@ class Crosssection{
             return;
         }
 
+        inline void add_syd(std::string time, float syd_point){
+            syd[time] = syd_point;
+            return;
+        }
+
+        inline float getSyd(std::string time){
+            return syd[time];
+        }
+
         inline const std::vector<std::tuple<float,float>> get_coor(std::string time){
             return coordinates[time];
         }
@@ -42,6 +51,7 @@ class Crosssection{
         int num_coor;
         // Key: time, Value: vector of coordinates @ time
         std::unordered_map<std::string,std::vector<std::tuple<float, float>>> coordinates;
+        std::unordered_map<std::string,float> syd;
         
 };
 
@@ -68,6 +78,8 @@ class HydrographFile{
         std::string approx_end;
         std::string closest_to_peak(const std::string& time1, const std::string& time2);
         std::string closest_to_end(const std::string& time1, const std::string& time2);
+
+        float exponent_to_float(const std::string& exp);
 };
 
 #endif

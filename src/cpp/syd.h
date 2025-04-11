@@ -7,6 +7,7 @@
 #include <QComboBox>
 #include <QLineSeries>
 #include <QPushButton>
+#include <QRadioButton>
 #include <QFormLayout>
 #include <QHBoxLayout>
 #include <QString>
@@ -30,15 +31,24 @@ class SYDWindow : public QWidget{
         QHBoxLayout* viewer_layout;
         QValueAxis* axis_x;
         QValueAxis* axis_y;
+        int min_y;
+        int max_y;
+        int min_x;
+        int max_x;
         QLineSeries* chart_data_initial;
         QLineSeries* chart_data_peak;
         QLineSeries* chart_data_end;
+        QLineSeries* chart_syd_peak;
+        QLineSeries* chart_syd_end;
         QChartView* chart_view;
         QChart* chart;
         QVBoxLayout* control_layout;
+    
         
         // Control Group
         QComboBox* cs_selector;
+        QRadioButton* cs_radio;
+        QRadioButton* syd_radio;
         
     signals:
         void counterReached();
@@ -47,6 +57,9 @@ class SYDWindow : public QWidget{
         void getFileButtonClicked();
         void getFileUploaded();
         void csSelectorChanged(const QString& text);
+        void sydSelectorChanged(const QString& text);
+        void csToSyd();
+        void sydToCs();
 };
 
 #endif

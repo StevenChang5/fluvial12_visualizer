@@ -30,7 +30,7 @@ HydrographFile::HydrographFile(string file_path){
             end = split[9];
         }else if(split[0] == "X1"){
             // Collect crosssection metadata at initial time=0
-            Crosssection* cs = new Crosssection(id, split[1], std::stoi(split_string(split[2],'.')[0]));
+            Crosssection* cs = new Crosssection(id, split[1], stoi(split_string(split[2],'.')[0]));
             int subrow = row + 1;
             int num_coor = cs->get_num_coor();
             while(split_string(lines[subrow])[0] != "GR") subrow++;
@@ -70,6 +70,16 @@ HydrographFile::HydrographFile(string file_path){
                 }
                 subrow++;
             }
+        }else if(split[0] == "TIME"){
+            string time = split[2];
+            int subrow = row + 5;
+            for(int temp_id = 1; temp_id < sections.size()+1; temp_id++){
+                vector<string> temp = split_string(lines[subrow]);
+                float syd = exponent_to_float(temp[temp.size()-1]);
+                Crosssection* temp_cs = sections[temp_id];
+                temp_cs->add_syd(time, syd);
+                subrow++;
+            }
         }
     }
 }
@@ -80,7 +90,7 @@ HydrographFile::~HydrographFile(){
     }
 }
 
-std::string HydrographFile::closest_to_peak(const std::string& time1, const std::string& time2){
+string HydrographFile::closest_to_peak(const string& time1, const string& time2){
     float t1 = stof(time1);
     float t2 = stof(time2);
     float pk = stof(peak);
@@ -91,7 +101,7 @@ std::string HydrographFile::closest_to_peak(const std::string& time1, const std:
     }
 }
 
-std::string HydrographFile::closest_to_end(const std::string& time1, const std::string& time2){
+string HydrographFile::closest_to_end(const string& time1, const string& time2){
     float t1 = stof(time1);
     float t2 = stof(time2);
     float ed = stof(end);
@@ -102,10 +112,32 @@ std::string HydrographFile::closest_to_end(const std::string& time1, const std::
     }
 }
 
-std::string HydrographFile::get_approx_peak(){
+string HydrographFile::get_approx_peak(){
     return approx_peak;
 }
 
-std::string HydrographFile::get_approx_end(){
+string HydrographFile::get_approx_end(){
     return approx_end;
+}
+
+float HydrographFile::exponent_to_float(const string& exp){
+    vector<string> num = split_string(exp, 'E');
+    bool pos = true;
+    if(num.size() == 1){
+        return stof(num[0]);
+    }
+    else{
+        float value = stof(num[0]);
+        string power = num[1];
+        if(power[0] == '-'){
+            pos = false;
+        }
+        float power_value = stof(power.substr(1));
+        if(pos){
+            return value * pow(10, power_value);
+        }
+        else{
+            return value * pow(10, -power_value);
+        }
+    }
 }
