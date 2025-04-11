@@ -20,17 +20,12 @@ SYDWindow::SYDWindow(QWidget *parent) : QWidget(parent){
     QGroupBox* load_group = new QGroupBox(tr("Upload/Save Files"), this);
     upload_button = new QPushButton("Upload File", this);
     connect(upload_button, SIGNAL(clicked()), this, SLOT(getFileButtonClicked()));
-    QLineEdit* upload_line_edit = new QLineEdit(this);
-    upload_line_edit->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
     save_button = new QPushButton("Save File", this);
     connect(save_button, SIGNAL(clicked()), this, SLOT(saveFileButtonClicked()));
-    QLineEdit* save_line_edit = new QLineEdit(this);
-    save_line_edit->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
 
-    load_group_layout = new QFormLayout(this);
-    load_group_layout->setFieldGrowthPolicy(QFormLayout::AllNonFixedFieldsGrow);
-    load_group_layout->addRow(upload_button, upload_line_edit);
-    load_group_layout->addRow(save_button, save_line_edit);
+    load_group_layout = new QVBoxLayout(this);
+    load_group_layout->addWidget(upload_button);
+    load_group_layout->addWidget(save_button);
     load_group->setLayout(load_group_layout);
 
     // Viewer and controls
@@ -104,6 +99,7 @@ SYDWindow::SYDWindow(QWidget *parent) : QWidget(parent){
     control_layout->addWidget(check_syd_end);
     control_layout->addStretch();
     control_layout->addWidget(cs_selector);
+    control_layout->addWidget(load_group);
 
     connect(this, SIGNAL(fileUploaded()), this, SLOT(getFileUploaded()));
     connect(cs_selector, SIGNAL(currentTextChanged(const QString&)), this, SLOT(csSelectorChanged(const QString&)));
@@ -123,16 +119,12 @@ SYDWindow::SYDWindow(QWidget *parent) : QWidget(parent){
     viewer_layout->addLayout(control_layout);
 
     main_layout->addLayout(viewer_layout);
-    main_layout->addWidget(load_group);
 
 }
 
 void SYDWindow::getFileButtonClicked(){
     fname = QFileDialog::getOpenFileName(this,"Select a file", "","Text Files (*.txt);;All Files (*)" );
     if(!fname.isEmpty()){
-        QLayoutItem* lineEdit = load_group_layout->itemAt(0,QFormLayout::FieldRole);
-        QLineEdit* edit = qobject_cast<QLineEdit*>(lineEdit->widget());
-        edit->setText(fname);
         hfile = new HydrographFile(fname.toStdString());
         emit fileUploaded();
         cs_radio->toggle();

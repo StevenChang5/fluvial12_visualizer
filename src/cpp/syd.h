@@ -26,7 +26,7 @@ class SYDWindow : public QWidget{
         QString save_path;
 
         // Upload/Download Group
-        QFormLayout* load_group_layout;
+        QVBoxLayout* load_group_layout;
         QPushButton* upload_button;
         QPushButton* save_button;
         
