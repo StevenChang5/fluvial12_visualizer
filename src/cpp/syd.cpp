@@ -75,17 +75,44 @@ SYDWindow::SYDWindow(QWidget *parent) : QWidget(parent){
     control_layout = new QVBoxLayout(this);
     cs_radio = new QRadioButton("Crosssection",this);
     syd_radio = new QRadioButton("Sediment Yield Tons",this);
+    check_data_initial = new QCheckBox("Initial",this);
+    check_data_peak = new QCheckBox("Peak",this);
+    check_data_end = new QCheckBox("End",this);
+    check_syd_peak = new QCheckBox("Peak",this);
+    check_syd_end = new QCheckBox("End",this);
+    check_syd_peak->setVisible(false);
+    check_syd_end->setVisible(false);
+    check_data_initial->setChecked(true);
+    check_data_peak->setChecked(true);
+    check_data_end->setChecked(true);
+    check_syd_peak->setChecked(true);
+    check_syd_end->setChecked(true);
     cs_selector = new QComboBox(this);
     cs_selector->setEnabled(false);
     control_layout->addWidget(new QLabel("Functions:",this));
     control_layout->addWidget(cs_radio);
     control_layout->addWidget(syd_radio);
+    control_layout->addWidget(new QLabel("View:", this));
+    control_layout->addWidget(check_data_initial);
+    control_layout->addWidget(check_data_peak);
+    control_layout->addWidget(check_data_end);
+    control_layout->addWidget(check_syd_peak);
+    control_layout->addWidget(check_syd_end);
     control_layout->addStretch();
     control_layout->addWidget(cs_selector);
+
     connect(this, SIGNAL(fileUploaded()), this, SLOT(getFileUploaded()));
     connect(cs_selector, SIGNAL(currentTextChanged(const QString&)), this, SLOT(csSelectorChanged(const QString&)));
     connect(cs_radio, SIGNAL(toggled(bool)), this, SLOT(sydToCs()));
     connect(syd_radio,SIGNAL(toggled(bool)), this, SLOT(csToSyd()));
+    connect(check_data_initial, &QCheckBox::toggled, this, [this](bool t){this->chart_data_initial->setVisible(t); });
+    connect(check_data_peak, &QCheckBox::toggled, this, [this](bool t){this->chart_data_peak->setVisible(t); });
+    connect(check_data_end, &QCheckBox::toggled, this, [this](bool t){this->chart_data_end->setVisible(t); });
+    connect(check_syd_peak, &QCheckBox::toggled, this, [this](bool t){this->chart_syd_peak->setVisible(t); });
+    connect(check_syd_end, &QCheckBox::toggled, this, [this](bool t){this->chart_syd_end->setVisible(t); });
+
+    check_syd_peak->setVisible(false);
+    check_syd_peak->setVisible(false);
 
     viewer_layout = new QHBoxLayout(this);
     viewer_layout->addWidget(chart_view);
@@ -171,6 +198,14 @@ void SYDWindow::sydSelectorChanged(const QString& text){
 
 void SYDWindow::csToSyd(){
     cs_selector->setEnabled(false);
+    check_data_initial->setVisible(false);
+    check_data_peak->setVisible(false);
+    check_data_end->setVisible(false);
+    check_syd_peak->setVisible(true);
+    check_syd_end->setVisible(true);
+    check_syd_peak->setChecked(true);
+    check_syd_end->setChecked(true);
+
     chart_data_initial->setVisible(false);
     chart_data_peak->setVisible(false);
     chart_data_end->setVisible(false);
@@ -196,6 +231,15 @@ void SYDWindow::csToSyd(){
 
 void SYDWindow::sydToCs(){
     cs_selector->setEnabled(true);
+    check_data_initial->setVisible(true);
+    check_data_peak->setVisible(true);
+    check_data_end->setVisible(true);
+    check_syd_peak->setVisible(false);
+    check_syd_end->setVisible(false);
+    check_data_initial->setChecked(true);
+    check_data_peak->setChecked(true);
+    check_data_end->setChecked(true);
+
     chart_data_initial->setVisible(true);
     chart_data_peak->setVisible(true);
     chart_data_end->setVisible(true);

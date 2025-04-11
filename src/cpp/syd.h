@@ -4,6 +4,7 @@
 #include <QWidget>
 #include <QChartView>
 #include <QChart>
+#include <QCheckBox>
 #include <QComboBox>
 #include <QLineSeries>
 #include <QPushButton>
@@ -42,6 +43,11 @@ class SYDWindow : public QWidget{
         QLineSeries* chart_syd_end;
         QChartView* chart_view;
         QChart* chart;
+        QCheckBox* check_data_initial;
+        QCheckBox* check_data_peak;
+        QCheckBox* check_data_end;
+        QCheckBox* check_syd_peak;
+        QCheckBox* check_syd_end;
         QVBoxLayout* control_layout;
     
         
