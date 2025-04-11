@@ -22,11 +22,15 @@ SYDWindow::SYDWindow(QWidget *parent) : QWidget(parent){
     connect(upload_button, SIGNAL(clicked()), this, SLOT(getFileButtonClicked()));
     QLineEdit* upload_line_edit = new QLineEdit(this);
     upload_line_edit->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
+    save_button = new QPushButton("Save File", this);
+    connect(save_button, SIGNAL(clicked()), this, SLOT(saveFileButtonClicked()));
+    QLineEdit* save_line_edit = new QLineEdit(this);
+    save_line_edit->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
 
     load_group_layout = new QFormLayout(this);
     load_group_layout->setFieldGrowthPolicy(QFormLayout::AllNonFixedFieldsGrow);
     load_group_layout->addRow(upload_button, upload_line_edit);
-    load_group_layout->addRow(new QLabel(tr("Save File:")), new QLineEdit);
+    load_group_layout->addRow(save_button, save_line_edit);
     load_group->setLayout(load_group_layout);
 
     // Viewer and controls
@@ -132,6 +136,16 @@ void SYDWindow::getFileButtonClicked(){
         hfile = new HydrographFile(fname.toStdString());
         emit fileUploaded();
         cs_radio->toggle();
+    }
+}
+
+void SYDWindow::saveFileButtonClicked(){
+    save_path = QFileDialog::getExistingDirectory(this,"Select a save directoryy");
+    save_path += "/test1.png";
+    qDebug() << save_path;
+    if(!save_path.isEmpty()){
+        chart_view->grab().save(save_path+"test.png");
+        return;
     }
 }
 

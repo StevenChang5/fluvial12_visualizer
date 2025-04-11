@@ -23,10 +23,12 @@ class SYDWindow : public QWidget{
     private:
         HydrographFile* hfile;
         QString fname;
+        QString save_path;
 
         // Upload/Download Group
         QFormLayout* load_group_layout;
         QPushButton* upload_button;
+        QPushButton* save_button;
         
         // Viewer Group
         QHBoxLayout* viewer_layout;
@@ -61,6 +63,7 @@ class SYDWindow : public QWidget{
         void fileUploaded();
     private slots:
         void getFileButtonClicked();
+        void saveFileButtonClicked();
         void getFileUploaded();
         void csSelectorChanged(const QString& text);
         void sydSelectorChanged(const QString& text);
