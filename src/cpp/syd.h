@@ -2,8 +2,8 @@
 #define SYD_H
 
 #include <QWidget>
+#include <QGroupBox>
 #include <QChartView>
-#include <QChart>
 #include <QCheckBox>
 #include <QComboBox>
 #include <QLineSeries>
@@ -25,42 +25,41 @@ class SYDWindow : public QWidget{
         QString fname;
         QString save_path;
 
-        // Upload/Download Group
-        QVBoxLayout* load_group_layout;
-        QPushButton* upload_button;
-        QPushButton* save_button;
+        QGroupBox* view_group;
+        QVBoxLayout* view_group_layout;
         
-        // Viewer Group
-        QHBoxLayout* viewer_layout;
+        // Chart
         QValueAxis* axis_x;
         QValueAxis* axis_y;
-        int min_y;
-        int max_y;
-        int min_x;
-        int max_x;
         QLineSeries* chart_data_initial;
         QLineSeries* chart_data_peak;
         QLineSeries* chart_data_end;
         QLineSeries* chart_syd_peak;
         QLineSeries* chart_syd_end;
         QChartView* chart_view;
-        QChart* chart;
-        QCheckBox* check_data_initial;
-        QCheckBox* check_data_peak;
-        QCheckBox* check_data_end;
-        QCheckBox* check_syd_peak;
-        QCheckBox* check_syd_end;
-        QVBoxLayout* control_layout;
-    
+        int min_y;
+        int max_y;
+        int min_x;
+        int max_x;
         
         // Control Group
         QComboBox* cs_selector;
         QRadioButton* cs_radio;
         QRadioButton* syd_radio;
+        QCheckBox* check_data_initial;
+        QCheckBox* check_data_peak;
+        QCheckBox* check_data_end;
+        QCheckBox* check_syd_peak;
+        QCheckBox* check_syd_end;
+
+        // Upload/Download Group
+        QPushButton* upload_button;
+        QPushButton* save_button;
         
     signals:
         void counterReached();
         void fileUploaded();
+        
     private slots:
         void getFileButtonClicked();
         void saveFileButtonClicked();

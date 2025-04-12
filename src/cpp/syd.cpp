@@ -5,6 +5,7 @@
 #include <string>
 
 #include <QApplication>
+#include <QHBoxLayout>
 #include <QVBoxLayout>
 #include <QGroupBox>
 #include <QLabel>
@@ -18,19 +19,12 @@ SYDWindow::SYDWindow(QWidget *parent) : QWidget(parent){
 
     QVBoxLayout *main_layout = new QVBoxLayout(this);
 
-    // Upload and save file controls
-    QGroupBox* load_group = new QGroupBox(tr("Upload/Save Files"), this);
-    upload_button = new QPushButton("Upload File", this);
-    connect(upload_button, SIGNAL(clicked()), this, SLOT(getFileButtonClicked()));
-    save_button = new QPushButton("Save File", this);
-    connect(save_button, SIGNAL(clicked()), this, SLOT(saveFileButtonClicked()));
-
-    load_group_layout = new QVBoxLayout(this);
-    load_group_layout->addWidget(upload_button);
-    load_group_layout->addWidget(save_button);
-    load_group->setLayout(load_group_layout);
-
-    // Viewer and controls
+    /********************************************************
+     * Viewer data initialization for cs and syd functions
+     * Creates line series for intial, peak, and end for cs
+     * Creates line series for peak, and for syd
+    ********************************************************/
+    // cs function
     chart_data_initial = new QLineSeries();
     chart_data_initial->setName(QString("Initial"));
     chart_data_initial->setPointsVisible(true);
@@ -41,6 +35,7 @@ SYDWindow::SYDWindow(QWidget *parent) : QWidget(parent){
     chart_data_end->setName(QString("End"));
     chart_data_end->setPointsVisible(true);
 
+    // syd function
     chart_syd_peak = new QLineSeries();
     chart_syd_peak->setName(QString("SYD Peak"));
     chart_syd_peak->setVisible(false);
@@ -48,34 +43,45 @@ SYDWindow::SYDWindow(QWidget *parent) : QWidget(parent){
     chart_syd_end->setName(QString("SYD End"));
     chart_syd_end->setVisible(false);
 
+    /********************************************************
+     * Chart initialization 
+    ********************************************************/
     chart_view = new QChartView(this);
-    chart = new QChart();
-    chart->addSeries(chart_data_initial);
-    chart->addSeries(chart_data_peak);
-    chart->addSeries(chart_data_end);
-    chart->addSeries(chart_syd_peak);
-    chart->addSeries(chart_syd_end);
-    chart_view->setChart(chart);
+    chart_view->chart()->addSeries(chart_data_initial);
+    chart_view->chart()->addSeries(chart_data_peak);
+    chart_view->chart()->addSeries(chart_data_end);
+    chart_view->chart()->addSeries(chart_syd_peak);
+    chart_view->chart()->addSeries(chart_syd_end);
     chart_view->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
 
     axis_x = new QValueAxis();
     axis_y = new QValueAxis();
-    chart->addAxis(axis_x, Qt::AlignBottom);
+    chart_view->chart()->addAxis(axis_x, Qt::AlignBottom);
     chart_data_initial->attachAxis(axis_x);
     chart_data_peak->attachAxis(axis_x);
     chart_data_end->attachAxis(axis_x);
     chart_syd_peak->attachAxis(axis_x);
     chart_syd_end->attachAxis(axis_x);
-    chart->addAxis(axis_y, Qt::AlignLeft);
+    chart_view->chart()->addAxis(axis_y, Qt::AlignLeft);
     chart_data_initial->attachAxis(axis_y);
     chart_data_peak->attachAxis(axis_y);
     chart_data_end->attachAxis(axis_y);
     chart_syd_peak->attachAxis(axis_y);
     chart_syd_end->attachAxis(axis_y);
-    
-    control_layout = new QVBoxLayout(this);
+
+    /********************************************************
+     * Control initialization
+     * Creates radio buttons to switch between cs and syd
+     * Creates check boxes to toggle viewing of init/peak/end
+     * Creates combo box to select different crosssections
+     * Creates upload/save file buttons
+    ********************************************************/
+
+    // Radio buttons
     cs_radio = new QRadioButton("Crosssection",this);
     syd_radio = new QRadioButton("Sediment Yield Tons",this);
+
+    // Check boxes
     check_data_initial = new QCheckBox("Initial",this);
     check_data_peak = new QCheckBox("Peak",this);
     check_data_end = new QCheckBox("End",this);
@@ -88,19 +94,41 @@ SYDWindow::SYDWindow(QWidget *parent) : QWidget(parent){
     check_data_end->setChecked(true);
     check_syd_peak->setChecked(true);
     check_syd_end->setChecked(true);
+
+    // Combo Box
     cs_selector = new QComboBox(this);
     cs_selector->setEnabled(false);
-    control_layout->addWidget(new QLabel("Functions:",this));
-    control_layout->addWidget(cs_radio);
-    control_layout->addWidget(syd_radio);
-    control_layout->addWidget(new QLabel("View:", this));
-    control_layout->addWidget(check_data_initial);
-    control_layout->addWidget(check_data_peak);
-    control_layout->addWidget(check_data_end);
-    control_layout->addWidget(check_syd_peak);
-    control_layout->addWidget(check_syd_end);
-    control_layout->addStretch();
-    control_layout->addWidget(cs_selector);
+
+    // Upload and save buttons
+    QGroupBox* load_group = new QGroupBox(tr("Upload/Save Files"), this);
+    upload_button = new QPushButton("Upload File", this);
+    connect(upload_button, SIGNAL(clicked()), this, SLOT(getFileButtonClicked()));
+    save_button = new QPushButton("Save File", this);
+    connect(save_button, SIGNAL(clicked()), this, SLOT(saveFileButtonClicked()));
+
+    QVBoxLayout* load_group_layout = new QVBoxLayout(this);
+    load_group_layout->addWidget(upload_button);
+    load_group_layout->addWidget(save_button);
+    load_group->setLayout(load_group_layout);
+    
+    // Layout
+    QVBoxLayout* control_layout = new QVBoxLayout(this);
+    view_group = new QGroupBox(tr("Viewer Controls"), this);
+    view_group_layout = new QVBoxLayout(this);
+    view_group->setLayout(view_group_layout);
+    view_group->setEnabled(false);
+    view_group_layout->addWidget(new QLabel("Functions:",this));
+    view_group_layout->addWidget(cs_radio);
+    view_group_layout->addWidget(syd_radio);
+    view_group_layout->addWidget(new QLabel("View:", this));
+    view_group_layout->addWidget(check_data_initial);
+    view_group_layout->addWidget(check_data_peak);
+    view_group_layout->addWidget(check_data_end);
+    view_group_layout->addWidget(check_syd_peak);
+    view_group_layout->addWidget(check_syd_end);
+    view_group_layout->addStretch();
+    view_group_layout->addWidget(cs_selector);
+    control_layout->addWidget(view_group);
     control_layout->addWidget(load_group);
 
     connect(this, SIGNAL(fileUploaded()), this, SLOT(getFileUploaded()));
@@ -113,15 +141,11 @@ SYDWindow::SYDWindow(QWidget *parent) : QWidget(parent){
     connect(check_syd_peak, &QCheckBox::toggled, this, [this](bool t){this->chart_syd_peak->setVisible(t); });
     connect(check_syd_end, &QCheckBox::toggled, this, [this](bool t){this->chart_syd_end->setVisible(t); });
 
-    check_syd_peak->setVisible(false);
-    check_syd_peak->setVisible(false);
-
-    viewer_layout = new QHBoxLayout(this);
+    QHBoxLayout* viewer_layout = new QHBoxLayout(this);
     viewer_layout->addWidget(chart_view);
     viewer_layout->addLayout(control_layout);
 
     main_layout->addLayout(viewer_layout);
-
 }
 
 void SYDWindow::getFileButtonClicked(){
@@ -130,6 +154,7 @@ void SYDWindow::getFileButtonClicked(){
         hfile = new HydrographFile(fname.toStdString());
         emit fileUploaded();
         cs_radio->toggle();
+        view_group->setEnabled(true);
     }
 }
 
