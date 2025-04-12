@@ -1,5 +1,7 @@
 #include "syd.h"
 
+#include <filesystem>
+#include <format>
 #include <string>
 
 #include <QApplication>
@@ -132,11 +134,16 @@ void SYDWindow::getFileButtonClicked(){
 }
 
 void SYDWindow::saveFileButtonClicked(){
-    save_path = QFileDialog::getExistingDirectory(this,"Select a save directoryy");
-    save_path += "/test1.png";
-    qDebug() << save_path;
+    save_path = QFileDialog::getExistingDirectory(this,"Select a save directory");
+    save_path += "/graph";
+    QString new_save_path = save_path + ".png";
+    int copy = 1;
     if(!save_path.isEmpty()){
-        chart_view->grab().save(save_path+"test.png");
+        while(std::filesystem::exists(new_save_path.toStdString())){
+            new_save_path = save_path + QString::fromStdString(std::format("({})",copy)) + ".png";
+            copy++;
+        }
+        chart_view->grab().save(new_save_path);
         return;
     }
 }
