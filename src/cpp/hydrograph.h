@@ -33,9 +33,15 @@ class Crosssection{
             ws_elev[time] = ws_elev_point;
         }
         
-        inline float getWsElev(std::string time){
+        inline const float getWsElev(std::string time){
             return ws_elev[time];
         }
+        
+        inline void addScour(float station, float elevation){
+            std::tuple<float,float> coor_pair(station,elevation);
+            scour.push_back(coor_pair);
+        }
+
         inline const std::vector<std::tuple<float,float>> get_coor(std::string time){
             return coordinates[time];
         }
@@ -60,13 +66,15 @@ class Crosssection{
         std::unordered_map<std::string,std::vector<std::tuple<float, float>>> coordinates;
         std::unordered_map<std::string,float> syd;
         std::unordered_map<std::string,float> ws_elev;
-        
+        std::vector<std::tuple<float, float>> scour;
 };
 
 class HydrographFile{
     public:
         HydrographFile(std::string file_path);
         ~HydrographFile();
+
+        void uploadScourFile(std::string file_path);
 
         // Key: crosssection ID, Value: crosssection object
         std::unordered_map<int, Crosssection*> sections;

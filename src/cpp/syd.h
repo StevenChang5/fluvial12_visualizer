@@ -27,16 +27,26 @@ class SYDWindow : public QWidget{
 
         QGroupBox* view_group;
         QVBoxLayout* view_group_layout;
+
+        class DataSeries{
+            public:
+                DataSeries(std::string name, QChartView* chart_view, QValueAxis* x, QValueAxis* y, QBoxLayout* layout, bool isVisible=true, QWidget* parent=0);
+                void setVisible(bool isVisible);
+
+                QLineSeries* line_series;
+                QCheckBox* check_box;
+        };
+
+        DataSeries* output_init;
+        DataSeries* output_peak;
+        DataSeries* output_end;
+        DataSeries* output_ws;
+        DataSeries* syd_peak;
+        DataSeries* syd_end;
         
         // Chart
         QValueAxis* axis_x;
         QValueAxis* axis_y;
-        QLineSeries* chart_data_initial;
-        QLineSeries* chart_data_peak;
-        QLineSeries* chart_data_end;
-        QLineSeries* chart_data_ws;
-        QLineSeries* chart_syd_peak;
-        QLineSeries* chart_syd_end;
         QChartView* chart_view;
         int min_y;
         int max_y;
@@ -51,12 +61,14 @@ class SYDWindow : public QWidget{
         QCheckBox* check_data_peak;
         QCheckBox* check_data_end;
         QCheckBox* check_data_ws;
+        QCheckBox* check_data_scour;
         QCheckBox* check_syd_peak;
         QCheckBox* check_syd_end;
 
         // Upload/Download Group
         QPushButton* upload_button;
         QPushButton* save_button;
+        QPushButton* upload_scour_button;
         
     signals:
         void counterReached();
@@ -64,6 +76,7 @@ class SYDWindow : public QWidget{
         
     private slots:
         void getFileButtonClicked();
+        void getScourFileButtonClicked();
         void saveFileButtonClicked();
         void getFileUploaded();
         void csSelectorChanged(const QString& text);

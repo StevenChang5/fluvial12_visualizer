@@ -92,6 +92,35 @@ HydrographFile::~HydrographFile(){
     }
 }
 
+void HydrographFile::uploadScourFile(string file_path){
+    ifstream hg_ifstream(file_path);
+    vector<string> lines;
+    string line;
+    int id = 1;
+    
+    while(getline(hg_ifstream, line)){
+        lines.push_back(line);
+    }
+    hg_ifstream.close();
+
+    for(int row = 0; row < lines.size(); row++){
+        vector<string> split = split_string(lines[row]);
+        if(split.size() == 0) continue;
+        else if(split[0][0] == 'X'){
+            int num_points = stoi(split[split.size()-2]);
+            int subrow = row+1;
+            for(int i = 0; i < ceil(num_points/5.0); i++){
+                vector<string> temp_coor = split_string(lines[subrow]);
+                for(int j = 1; j < temp_coor.size(); j += 2){
+                    sections[id]->addScour(stof(temp_coor[j+1]),stof(temp_coor[j]));
+                }
+                subrow++;
+            }
+            id++;
+        }
+    }
+}
+
 string HydrographFile::closest_to_peak(const string& time1, const string& time2){
     float t1 = stof(time1);
     float t2 = stof(time2);
