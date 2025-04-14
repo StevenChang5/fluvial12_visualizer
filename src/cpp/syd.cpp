@@ -81,6 +81,9 @@ SYDWindow::SYDWindow(QWidget *parent) : QWidget(parent){
     output_ws = new DataSeries("W.S. at Peak", chart_view, axis_x, axis_y, view_group_layout);
     syd_peak = new DataSeries("Syd Peak", chart_view, axis_x, axis_y, view_group_layout);
     syd_end = new DataSeries("Syd End", chart_view, axis_x, axis_y, view_group_layout);
+    scour = new DataSeries("Scour", chart_view, axis_x, axis_y, view_group_layout);
+    scour->setVisible(false);
+    scour_loaded = false;
     syd_peak->setVisible(false);
     syd_end->setVisible(false);
 
@@ -93,6 +96,7 @@ SYDWindow::SYDWindow(QWidget *parent) : QWidget(parent){
     connect(cs_selector, SIGNAL(currentTextChanged(const QString&)), this, SLOT(csSelectorChanged(const QString&)));
     connect(cs_radio, SIGNAL(toggled(bool)), this, SLOT(sydToCs()));
     connect(syd_radio,SIGNAL(toggled(bool)), this, SLOT(csToSyd()));
+    connect(this, SIGNAL(displayScour()), this, SLOT(displayScourReceived()));
 
     QHBoxLayout* viewer_layout = new QHBoxLayout(this);
     viewer_layout->addWidget(chart_view);
@@ -116,6 +120,8 @@ void SYDWindow::getScourFileButtonClicked(){
     fname = QFileDialog::getOpenFileName(this,"Select TZMIN.OUT","","Text Files (*.OUT);;All Files (*)");
     if(!fname.isEmpty()){
         hfile->uploadScourFile(fname.toStdString());
+        scour_loaded = true;
+        emit displayScour();
     }
 }
 
@@ -190,6 +196,9 @@ void SYDWindow::csSelectorChanged(const QString& text){
     }
     output_ws->line_series->append(min_x, cs->getWsElev(hfile->getApproxPeak()));
     output_ws->line_series->append(max_x, cs->getWsElev(hfile->getApproxPeak()));
+    if(scour_loaded){
+        emit displayScour();
+    }
 
     axis_x->setRange(min_x, max_x);
     axis_y->setRange(min_y, max_y);
@@ -235,6 +244,30 @@ void SYDWindow::sydToCs(){
     
     axis_x->setRange(min_x, max_x);
     axis_y->setRange(min_y, max_y);
+}
+
+void SYDWindow::displayScourReceived(){
+    std::string data = cs_selector->currentText().toStdString();
+    int idx_left = data.find(' ')+1;
+    int idx_right = data.find(',');
+    int id = stoi(data.substr(idx_left, idx_right-idx_left));
+
+    Crosssection* cs = hfile->sections[id];
+    scour->line_series->clear();
+    float x;
+    float y;
+    for(int i = 0; i < cs->getScour().size(); i++){
+        x = std::get<0>(cs->getScour()[i]);
+        y = std::get<1>(cs->getScour()[i]);
+        min_x = std::min(x, min_x);
+        max_x = std::max(x, max_x);
+        min_y = std::min(y, min_y);
+        max_y = std::max(y, max_y);
+        scour->line_series->append(x,y);
+    }
+    axis_x->setRange(min_x, max_x);
+    axis_y->setRange(min_y, max_y);
+    scour->setVisible(true);
 }
 
 SYDWindow::DataSeries::DataSeries(std::string name, QChartView* chart_view, QValueAxis* x, QValueAxis* y, QBoxLayout* layout, bool isVisible, QWidget* parent){

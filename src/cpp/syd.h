@@ -43,6 +43,9 @@ class SYDWindow : public QWidget{
         DataSeries* output_ws;
         DataSeries* syd_peak;
         DataSeries* syd_end;
+        DataSeries* scour;
+
+        bool scour_loaded;
         
         // Chart
         QValueAxis* axis_x;
@@ -71,8 +74,8 @@ class SYDWindow : public QWidget{
         QPushButton* upload_scour_button;
         
     signals:
-        void counterReached();
         void fileUploaded();
+        void displayScour();
         
     private slots:
         void getFileButtonClicked();
@@ -83,6 +86,7 @@ class SYDWindow : public QWidget{
         void sydSelectorChanged(const QString& text);
         void csToSyd();
         void sydToCs();
+        void displayScourReceived();
 };
 
 #endif

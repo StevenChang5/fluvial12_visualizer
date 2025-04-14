@@ -42,6 +42,10 @@ class Crosssection{
             scour.push_back(coor_pair);
         }
 
+        inline const std::vector<std::tuple<float,float>> getScour(){
+            return scour;
+        }
+
         inline const std::vector<std::tuple<float,float>> get_coor(std::string time){
             return coordinates[time];
         }
