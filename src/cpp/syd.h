@@ -48,10 +48,10 @@ class SYDWindow : public QWidget{
         QValueAxis* axis_x;
         QValueAxis* axis_y;
         QChartView* chart_view;
-        int min_y;
-        int max_y;
-        int min_x;
-        int max_x;
+        float min_y;
+        float max_y;
+        float min_x;
+        float max_x;
         
         // Control Group
         QComboBox* cs_selector;

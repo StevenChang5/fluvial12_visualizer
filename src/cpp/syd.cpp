@@ -1,3 +1,4 @@
+#include "float.h"
 #include "syd.h"
 
 #include <filesystem>
@@ -80,6 +81,8 @@ SYDWindow::SYDWindow(QWidget *parent) : QWidget(parent){
     output_ws = new DataSeries("W.S. at Peak", chart_view, axis_x, axis_y, view_group_layout);
     syd_peak = new DataSeries("Syd Peak", chart_view, axis_x, axis_y, view_group_layout);
     syd_end = new DataSeries("Syd End", chart_view, axis_x, axis_y, view_group_layout);
+    syd_peak->setVisible(false);
+    syd_end->setVisible(false);
 
     view_group_layout->addStretch();
     view_group_layout->addWidget(cs_selector);
@@ -153,13 +156,13 @@ void SYDWindow::csSelectorChanged(const QString& text){
     auto coor_initial = cs->get_coor("0");
     auto coor_peak = cs->get_coor(hfile->get_approx_peak());
     auto coor_end = cs->get_coor(hfile->get_approx_end());
-    min_y = INT_MAX;
-    max_y = INT_MIN;
-    min_x = INT_MAX;
-    max_x = INT_MIN;
+    min_y = FLT_MAX;
+    max_y = FLT_MIN;
+    min_x = FLT_MAX;
+    max_x = FLT_MIN;
     for(int i = 0; i < coor_initial.size(); i++){
-        int x_initial = std::get<0>(coor_initial[i]);
-        int y_initial = std::get<1>(coor_initial[i]);
+        float x_initial = std::get<0>(coor_initial[i]);
+        float y_initial = std::get<1>(coor_initial[i]);
         min_x = std::min(x_initial, min_x);
         max_x = std::max(x_initial, max_x);
         min_y = std::min(y_initial, min_y);
@@ -168,8 +171,8 @@ void SYDWindow::csSelectorChanged(const QString& text){
         
     }
     for(int i = 0; i < coor_peak.size(); i++){
-        int x_peak = std::get<0>(coor_peak[i]);
-        int y_peak = std::get<1>(coor_peak[i]);
+        float x_peak = std::get<0>(coor_peak[i]);
+        float y_peak = std::get<1>(coor_peak[i]);
         min_x = std::min(x_peak, min_x);
         max_x = std::max(x_peak, max_x);
         min_y = std::min(y_peak, min_y);
@@ -177,8 +180,8 @@ void SYDWindow::csSelectorChanged(const QString& text){
         output_peak->line_series->append(x_peak, y_peak);
     }
     for(int i = 0; i < coor_end.size(); i++){
-        int x_end = std::get<0>(coor_end[i]);
-        int y_end = std::get<1>(coor_end[i]);
+        float x_end = std::get<0>(coor_end[i]);
+        float y_end = std::get<1>(coor_end[i]);
         min_x = std::min(x_end, min_x);
         max_x = std::max(x_end, max_x);
         min_y = std::min(y_end, min_y);
