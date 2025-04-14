@@ -20,7 +20,7 @@ class Crosssection{
             return;
         }
 
-        inline void add_syd(std::string time, float syd_point){
+        inline void addSyd(std::string time, float syd_point){
             syd[time] = syd_point;
             return;
         }
@@ -29,6 +29,13 @@ class Crosssection{
             return syd[time];
         }
 
+        inline void addWsElev(std::string time, float ws_elev_point){
+            ws_elev[time] = ws_elev_point;
+        }
+        
+        inline float getWsElev(std::string time){
+            return ws_elev[time];
+        }
         inline const std::vector<std::tuple<float,float>> get_coor(std::string time){
             return coordinates[time];
         }
@@ -52,6 +59,7 @@ class Crosssection{
         // Key: time, Value: vector of coordinates @ time
         std::unordered_map<std::string,std::vector<std::tuple<float, float>>> coordinates;
         std::unordered_map<std::string,float> syd;
+        std::unordered_map<std::string,float> ws_elev;
         
 };
 

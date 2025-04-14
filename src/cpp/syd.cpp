@@ -34,6 +34,8 @@ SYDWindow::SYDWindow(QWidget *parent) : QWidget(parent){
     chart_data_end = new QLineSeries();
     chart_data_end->setName(QString("End"));
     chart_data_end->setPointsVisible(true);
+    chart_data_ws = new QLineSeries();
+    chart_data_ws->setName(QString("W.S. Elevation at Peak"));
 
     // syd function
     chart_syd_peak = new QLineSeries();
@@ -50,6 +52,7 @@ SYDWindow::SYDWindow(QWidget *parent) : QWidget(parent){
     chart_view->chart()->addSeries(chart_data_initial);
     chart_view->chart()->addSeries(chart_data_peak);
     chart_view->chart()->addSeries(chart_data_end);
+    chart_view->chart()->addSeries(chart_data_ws);
     chart_view->chart()->addSeries(chart_syd_peak);
     chart_view->chart()->addSeries(chart_syd_end);
     chart_view->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
@@ -60,12 +63,14 @@ SYDWindow::SYDWindow(QWidget *parent) : QWidget(parent){
     chart_data_initial->attachAxis(axis_x);
     chart_data_peak->attachAxis(axis_x);
     chart_data_end->attachAxis(axis_x);
+    chart_data_ws->attachAxis(axis_x);
     chart_syd_peak->attachAxis(axis_x);
     chart_syd_end->attachAxis(axis_x);
     chart_view->chart()->addAxis(axis_y, Qt::AlignLeft);
     chart_data_initial->attachAxis(axis_y);
     chart_data_peak->attachAxis(axis_y);
     chart_data_end->attachAxis(axis_y);
+    chart_data_ws->attachAxis(axis_y);
     chart_syd_peak->attachAxis(axis_y);
     chart_syd_end->attachAxis(axis_y);
 
@@ -85,6 +90,7 @@ SYDWindow::SYDWindow(QWidget *parent) : QWidget(parent){
     check_data_initial = new QCheckBox("Initial",this);
     check_data_peak = new QCheckBox("Peak",this);
     check_data_end = new QCheckBox("End",this);
+    check_data_ws = new QCheckBox("W.S. Elevation at Peak", this);
     check_syd_peak = new QCheckBox("Peak",this);
     check_syd_end = new QCheckBox("End",this);
     check_syd_peak->setVisible(false);
@@ -92,6 +98,7 @@ SYDWindow::SYDWindow(QWidget *parent) : QWidget(parent){
     check_data_initial->setChecked(true);
     check_data_peak->setChecked(true);
     check_data_end->setChecked(true);
+    check_data_ws->setChecked(true);
     check_syd_peak->setChecked(true);
     check_syd_end->setChecked(true);
 
@@ -124,6 +131,7 @@ SYDWindow::SYDWindow(QWidget *parent) : QWidget(parent){
     view_group_layout->addWidget(check_data_initial);
     view_group_layout->addWidget(check_data_peak);
     view_group_layout->addWidget(check_data_end);
+    view_group_layout->addWidget(check_data_ws);
     view_group_layout->addWidget(check_syd_peak);
     view_group_layout->addWidget(check_syd_end);
     view_group_layout->addStretch();
@@ -138,6 +146,7 @@ SYDWindow::SYDWindow(QWidget *parent) : QWidget(parent){
     connect(check_data_initial, &QCheckBox::toggled, this, [this](bool t){this->chart_data_initial->setVisible(t); });
     connect(check_data_peak, &QCheckBox::toggled, this, [this](bool t){this->chart_data_peak->setVisible(t); });
     connect(check_data_end, &QCheckBox::toggled, this, [this](bool t){this->chart_data_end->setVisible(t); });
+    connect(check_data_ws, &QCheckBox::toggled, this, [this](bool t){this->chart_data_ws->setVisible(t); });
     connect(check_syd_peak, &QCheckBox::toggled, this, [this](bool t){this->chart_syd_peak->setVisible(t); });
     connect(check_syd_end, &QCheckBox::toggled, this, [this](bool t){this->chart_syd_end->setVisible(t); });
 
@@ -191,6 +200,7 @@ void SYDWindow::csSelectorChanged(const QString& text){
     chart_data_initial->clear();
     chart_data_peak->clear();
     chart_data_end->clear();
+    chart_data_ws->clear();
     auto coor_initial = cs->get_coor("0");
     auto coor_peak = cs->get_coor(hfile->get_approx_peak());
     auto coor_end = cs->get_coor(hfile->get_approx_end());
@@ -226,6 +236,9 @@ void SYDWindow::csSelectorChanged(const QString& text){
         max_y = std::max(y_end, max_y);
         chart_data_end->append(x_end, y_end);
     }
+    chart_data_ws->append(min_x, cs->getWsElev(hfile->get_approx_peak()));
+    chart_data_ws->append(max_x, cs->getWsElev(hfile->get_approx_peak()));
+
     axis_x->setRange(min_x, max_x);
     axis_y->setRange(min_y, max_y);
 }
@@ -239,6 +252,7 @@ void SYDWindow::csToSyd(){
     check_data_initial->setVisible(false);
     check_data_peak->setVisible(false);
     check_data_end->setVisible(false);
+    check_data_ws->setVisible(false);
     check_syd_peak->setVisible(true);
     check_syd_end->setVisible(true);
     check_syd_peak->setChecked(true);
@@ -247,6 +261,7 @@ void SYDWindow::csToSyd(){
     chart_data_initial->setVisible(false);
     chart_data_peak->setVisible(false);
     chart_data_end->setVisible(false);
+    chart_data_ws->setVisible(false);
     chart_syd_peak->setVisible(true);
     chart_syd_end->setVisible(true);
     chart_syd_peak->setPointsVisible(true);
@@ -272,15 +287,18 @@ void SYDWindow::sydToCs(){
     check_data_initial->setVisible(true);
     check_data_peak->setVisible(true);
     check_data_end->setVisible(true);
+    check_data_ws->setVisible(true);
     check_syd_peak->setVisible(false);
     check_syd_end->setVisible(false);
     check_data_initial->setChecked(true);
     check_data_peak->setChecked(true);
     check_data_end->setChecked(true);
+    check_data_ws->setChecked(true);
 
     chart_data_initial->setVisible(true);
     chart_data_peak->setVisible(true);
     chart_data_end->setVisible(true);
+    chart_data_ws->setVisible(true);
     chart_syd_peak->setVisible(false);
     chart_syd_end->setVisible(false);
     chart_syd_peak->setPointsVisible(false);

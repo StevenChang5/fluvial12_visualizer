@@ -34,6 +34,7 @@ class SYDWindow : public QWidget{
         QLineSeries* chart_data_initial;
         QLineSeries* chart_data_peak;
         QLineSeries* chart_data_end;
+        QLineSeries* chart_data_ws;
         QLineSeries* chart_syd_peak;
         QLineSeries* chart_syd_end;
         QChartView* chart_view;
@@ -49,6 +50,7 @@ class SYDWindow : public QWidget{
         QCheckBox* check_data_initial;
         QCheckBox* check_data_peak;
         QCheckBox* check_data_end;
+        QCheckBox* check_data_ws;
         QCheckBox* check_syd_peak;
         QCheckBox* check_syd_end;
 

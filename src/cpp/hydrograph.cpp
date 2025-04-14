@@ -76,8 +76,10 @@ HydrographFile::HydrographFile(string file_path){
             for(int temp_id = 1; temp_id < sections.size()+1; temp_id++){
                 vector<string> temp = split_string(lines[subrow]);
                 float syd = exponent_to_float(temp[temp.size()-1]);
+                float ws_elev = stof(temp[1]);
                 Crosssection* temp_cs = sections[temp_id];
-                temp_cs->add_syd(time, syd);
+                temp_cs->addSyd(time, syd);
+                temp_cs->addWsElev(time, ws_elev);
                 subrow++;
             }
         }
