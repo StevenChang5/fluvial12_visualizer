@@ -138,7 +138,7 @@ void SYDWindow::getFileUploaded(){
     cs_selector->setEnabled(true);
     for(int i = 1; i < hfile->sections.size(); i++){
         Crosssection* temp = hfile->sections[i];
-        cs_selector->addItem(QString::fromStdString(std::format("ID: {}, Name: {}",temp->get_id(), temp->get_name())));
+        cs_selector->addItem(QString::fromStdString(std::format("ID: {}, Name: {}",temp->getId(), temp->getName())));
     }
 }
 
@@ -154,8 +154,8 @@ void SYDWindow::csSelectorChanged(const QString& text){
     output_end->line_series->clear();
     output_ws->line_series->clear();
     auto coor_initial = cs->get_coor("0");
-    auto coor_peak = cs->get_coor(hfile->get_approx_peak());
-    auto coor_end = cs->get_coor(hfile->get_approx_end());
+    auto coor_peak = cs->get_coor(hfile->getApproxPeak());
+    auto coor_end = cs->get_coor(hfile->getApproxEnd());
     min_y = FLT_MAX;
     max_y = FLT_MIN;
     min_x = FLT_MAX;
@@ -188,8 +188,8 @@ void SYDWindow::csSelectorChanged(const QString& text){
         max_y = std::max(y_end, max_y);
         output_end->line_series->append(x_end, y_end);
     }
-    output_ws->line_series->append(min_x, cs->getWsElev(hfile->get_approx_peak()));
-    output_ws->line_series->append(max_x, cs->getWsElev(hfile->get_approx_peak()));
+    output_ws->line_series->append(min_x, cs->getWsElev(hfile->getApproxPeak()));
+    output_ws->line_series->append(max_x, cs->getWsElev(hfile->getApproxPeak()));
 
     axis_x->setRange(min_x, max_x);
     axis_y->setRange(min_y, max_y);
@@ -213,13 +213,13 @@ void SYDWindow::csToSyd(){
     float y = INT_MIN;
     for(int id = 1; id < hfile->sections.size()+1; id++){
         Crosssection* cs = hfile->sections[id];
-        float peak = cs->getSyd(hfile->get_approx_peak());
-        float end = cs->getSyd(hfile->get_approx_end());
-        syd_peak->line_series->append(stof(cs->get_name()),peak);
-        syd_end->line_series->append(stof(cs->get_name()),end);
+        float peak = cs->getSyd(hfile->getApproxPeak());
+        float end = cs->getSyd(hfile->getApproxEnd());
+        syd_peak->line_series->append(stof(cs->getName()),peak);
+        syd_end->line_series->append(stof(cs->getName()),end);
         y = std::max(y, std::max(peak, end));
     }
-    axis_x->setRange(stof(hfile->sections[1]->get_name()), stof(hfile->sections[hfile->sections.size()]->get_name()));
+    axis_x->setRange(stof(hfile->sections[1]->getName()), stof(hfile->sections[hfile->sections.size()]->getName()));
     axis_y->setRange(0, y);
 }
 

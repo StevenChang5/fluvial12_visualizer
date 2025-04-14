@@ -14,7 +14,7 @@ class Crosssection{
             num_coor = cs_num_coor;
         }
 
-        inline void add_coor(float station, float elevation, std::string time){
+        inline void addCoor(float station, float elevation, std::string time){
             std::tuple<float, float> coor_pair(station, elevation);
             coordinates[time].push_back(coor_pair);
             return;
@@ -46,15 +46,15 @@ class Crosssection{
             return coordinates[time];
         }
 
-        inline const int get_num_coor(){
+        inline const int getNumCoor(){
             return num_coor;
         }
 
-        inline const int get_id(){
+        inline const int getId(){
             return id;
         }
 
-        inline const std::string get_name(){
+        inline const std::string getName(){
             return name;
         }
 
@@ -78,8 +78,8 @@ class HydrographFile{
 
         // Key: crosssection ID, Value: crosssection object
         std::unordered_map<int, Crosssection*> sections;
-        std::string get_approx_peak();
-        std::string get_approx_end();
+        std::string getApproxPeak();
+        std::string getApproxEnd();
 
     private:
         /* 

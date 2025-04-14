@@ -32,12 +32,12 @@ HydrographFile::HydrographFile(string file_path){
             // Collect crosssection metadata at initial time=0
             Crosssection* cs = new Crosssection(id, split[1], stoi(split_string(split[2],'.')[0]));
             int subrow = row + 1;
-            int num_coor = cs->get_num_coor();
+            int num_coor = cs->getNumCoor();
             while(split_string(lines[subrow])[0] != "GR") subrow++;
             for(int i = 0; i < ceil(num_coor/5.0); i++){
                 vector<string> temp_coor = split_string(lines[subrow]);
                 for(int j = 1; j < temp_coor.size(); j += 2){
-                    cs->add_coor(stof(temp_coor[j+1]),stof(temp_coor[j]),"0");
+                    cs->addCoor(stof(temp_coor[j+1]),stof(temp_coor[j]),"0");
                 }
                 subrow++;
             }
@@ -62,11 +62,11 @@ HydrographFile::HydrographFile(string file_path){
             }
             Crosssection* temp_cs = sections[temp_id];
             subrow += 4;
-            int num_coor = temp_cs->get_num_coor();
+            int num_coor = temp_cs->getNumCoor();
             for(int i = 0; i < ceil(num_coor/3.0); i++){
                 vector<string> temp_coor = split_string(lines[subrow]);
                 for(int j = 0; j < temp_coor.size(); j+=4){
-                    temp_cs->add_coor(stof(temp_coor[j+3]),stof(temp_coor[j]),temp_time);
+                    temp_cs->addCoor(stof(temp_coor[j+3]),stof(temp_coor[j]),temp_time);
                 }
                 subrow++;
             }
@@ -143,11 +143,11 @@ string HydrographFile::closest_to_end(const string& time1, const string& time2){
     }
 }
 
-string HydrographFile::get_approx_peak(){
+string HydrographFile::getApproxPeak(){
     return approx_peak;
 }
 
-string HydrographFile::get_approx_end(){
+string HydrographFile::getApproxEnd(){
     return approx_end;
 }
 
