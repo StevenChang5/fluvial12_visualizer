@@ -2,6 +2,7 @@
 #include <QTabWidget>
 #include <QMainWindow>
 #include "syd.h"
+#include "lp.h"
 #include "lsd.h"
 
 int main(int argc, char** argv){
@@ -14,6 +15,10 @@ int main(int argc, char** argv){
     SYDWindow* syd_window = new SYDWindow(tasks);
     QString syd("Soild Yield Deposition");
     tasks->addTab(syd_window, syd);
+
+    LPWindow* lp_window = new LPWindow(tasks);
+    QString lp("Longitudinal Profile");
+    tasks->addTab(lp_window, lp);
 
     LSDWindow* sd_window = new LSDWindow(tasks);
     QString sd("Sediment Delivery");
