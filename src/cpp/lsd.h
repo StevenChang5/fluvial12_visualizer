@@ -1,5 +1,5 @@
-#ifndef SD_H
-#define SD_H
+#ifndef LSD_H
+#define LSD_H
 
 #include <QWidget>
 #include <QChartView>
@@ -10,14 +10,14 @@
 #include <QValueAxis>
 #include <QVBoxLayout>
 
-#include "ty.h"
+#include "tyyFile.h"
 
-class SDWindow : public QWidget{
+class LSDWindow : public QWidget{
     Q_OBJECT
     public:
-        explicit SDWindow(QWidget* parent=0);
+        explicit LSDWindow(QWidget* parent=0);
     private:
-        TYFile* ty_file;
+        TYYFile* ty_file;
         QString fname;
         QString save_path;
 

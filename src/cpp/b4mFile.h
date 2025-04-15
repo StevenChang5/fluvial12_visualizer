@@ -1,5 +1,5 @@
-#ifndef HYDROGRAPH_H
-#define HYDROGRAPH_H
+#ifndef B4MFILE_H
+#define B4MFILE_H
 
 #include <string>
 #include <tuple>

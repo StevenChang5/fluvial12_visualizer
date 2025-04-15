@@ -1,11 +1,11 @@
-#include "sd.h"
+#include "lsd.h"
 
 #include <QFileDialog>
 #include <QHBoxLayout>
 #include <QLabel>
 #include <QSizePolicy>
 
-SDWindow::SDWindow(QWidget* parent) : QWidget(parent){
+LSDWindow::LSDWindow(QWidget* parent) : QWidget(parent){
     QVBoxLayout* main_layout = new QVBoxLayout(this);
 
     chart_view = new QChartView(this);
@@ -51,10 +51,10 @@ SDWindow::SDWindow(QWidget* parent) : QWidget(parent){
     return;
 }
 
-void SDWindow::getFileButtonClicked(){
+void LSDWindow::getFileButtonClicked(){
     fname = QFileDialog::getOpenFileName(this,"Select a file", "","TYY File (*TYY);;All Files (*)" );
     if(!fname.isEmpty()){
-        ty_file = new TYFile(fname.toStdString());
+        ty_file = new TYYFile(fname.toStdString());
         std::vector<std::tuple<float,float,float>> coors = ty_file->getCoordinates();
         for(int i = 0; i < coors.size(); i++){
             float x = std::get<0>(coors[i]);
@@ -76,7 +76,7 @@ void SDWindow::getFileButtonClicked(){
     axis_y->setRange(min_y, max_y);
 }
 
-void SDWindow::saveFileButtonClicked(){
+void LSDWindow::saveFileButtonClicked(){
     save_path = QFileDialog::getExistingDirectory(this,"Select a save directory");
     save_path += "/sediment_delivery";
     QString new_save_path = save_path + ".png";
@@ -91,7 +91,7 @@ void SDWindow::saveFileButtonClicked(){
     }
 }
 
-SDWindow::DataSeries::DataSeries(std::string name, QChartView* chart_view, QValueAxis* x, QValueAxis* y, QBoxLayout* layout, bool isVisible, QWidget* parent){
+LSDWindow::DataSeries::DataSeries(std::string name, QChartView* chart_view, QValueAxis* x, QValueAxis* y, QBoxLayout* layout, bool isVisible, QWidget* parent){
     line_series = new QLineSeries();
     line_series->setName(QString::fromStdString(name));
     chart_view->chart()->addSeries(line_series);
@@ -109,7 +109,7 @@ SDWindow::DataSeries::DataSeries(std::string name, QChartView* chart_view, QValu
     connect(check_box, &QCheckBox::toggled, line_series, [this](bool t){line_series->setVisible(t);});
 }
 
-void SDWindow::DataSeries::setVisible(bool isVisible){
+void LSDWindow::DataSeries::setVisible(bool isVisible){
     line_series->setVisible(isVisible);
     check_box->setVisible(isVisible);
     check_box->setChecked(isVisible);

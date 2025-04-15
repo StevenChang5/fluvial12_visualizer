@@ -14,7 +14,7 @@
 #include <QString>
 #include <QValueAxis>
 
-#include "hydrograph.h"
+#include "b4mFile.h"
 
 class SYDWindow : public QWidget{
     Q_OBJECT

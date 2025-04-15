@@ -1,15 +1,15 @@
-#include "ty.h"
+#include "tyyFile.h"
 #include "utils.h"
 
 #include <fstream>
 
 using namespace std;
 
-TYFile::TYFile(string file_path){
+TYYFile::TYYFile(string file_path){
     readFile(file_path);
 }
 
-void TYFile::readFile(string file_path){
+void TYYFile::readFile(string file_path){
     ifstream ty_ifstream(file_path);
     string line;
     while(getline(ty_ifstream, line)){
@@ -22,6 +22,6 @@ void TYFile::readFile(string file_path){
     }
 }
 
-const vector<tuple<float,float,float>> TYFile::getCoordinates(){
+const vector<tuple<float,float,float>> TYYFile::getCoordinates(){
     return coordinates;
 }

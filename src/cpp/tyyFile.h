@@ -1,13 +1,13 @@
-#ifndef TY_H
-#define TY_H
+#ifndef TYYFILE_H
+#define TYYFILE_H
 
 #include <string>
 #include <tuple>
 #include <vector>
 
-class TYFile{
+class TYYFile{
     public:
-        TYFile(std::string file_path);
+        TYYFile(std::string file_path);
         void readFile(std::string file_path);
         const std::vector<std::tuple<float,float,float>> getCoordinates();
     private:
