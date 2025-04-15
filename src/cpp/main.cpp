@@ -2,6 +2,7 @@
 #include <QTabWidget>
 #include <QMainWindow>
 #include "syd.h"
+#include "sd.h"
 
 int main(int argc, char** argv){
     QApplication app(argc, argv);
@@ -13,6 +14,10 @@ int main(int argc, char** argv){
     SYDWindow* syd_window = new SYDWindow(tasks);
     QString syd("Soild Yield Deposition");
     tasks->addTab(syd_window, syd);
+
+    SDWindow* sd_window = new SDWindow(tasks);
+    QString sd("Sediment Delivery");
+    tasks->addTab(sd_window, sd);
 
     window.setCentralWidget(tasks);
 

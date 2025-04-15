@@ -7,11 +7,14 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 find_package(Qt6 COMPONENTS Widgets REQUIRED COMPONENTS Charts)
 
 qt6_wrap_cpp(MOC_SOURCES syd.h)
+qt6_wrap_cpp(MOC_SOURCES sd.h)
 
 
 add_executable(main
     main.cpp
     syd.cpp
+    sd.cpp
+    ty.cpp
     hydrograph.cpp
     ${MOC_SOURCES}
 )
