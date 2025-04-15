@@ -6,11 +6,7 @@
 #include <string>
 
 #include <QApplication>
-#include <QHBoxLayout>
-#include <QVBoxLayout>
-#include <QGroupBox>
 #include <QLabel>
-#include <QLineEdit>
 #include <QFileDialog>
 #include <QSizePolicy>
 
@@ -82,6 +78,7 @@ SYDWindow::SYDWindow(QWidget *parent) : QWidget(parent){
     syd_peak = new DataSeries("Syd Peak", chart_view, axis_x, axis_y, view_group_layout);
     syd_end = new DataSeries("Syd End", chart_view, axis_x, axis_y, view_group_layout);
     scour = new DataSeries("Scour", chart_view, axis_x, axis_y, view_group_layout);
+    scour->line_series->setColor(QColor(Qt::red));
     scour->setVisible(false);
     scour_loaded = false;
     syd_peak->setVisible(false);
@@ -213,6 +210,9 @@ void SYDWindow::csToSyd(){
     output_peak->setVisible(false);
     output_end->setVisible(false);
     output_ws->setVisible(false);
+    if(scour_loaded){
+        scour->setVisible(false);
+    }
     syd_peak->setVisible(true);
     syd_end->setVisible(true);
 
@@ -239,6 +239,9 @@ void SYDWindow::sydToCs(){
     output_peak->setVisible(true);
     output_end->setVisible(true);
     output_ws->setVisible(true);
+    if(scour_loaded){
+        scour->setVisible(true);
+    }
     syd_peak->setVisible(false);
     syd_end->setVisible(false);
     
@@ -291,4 +294,5 @@ SYDWindow::DataSeries::DataSeries(std::string name, QChartView* chart_view, QVal
 void SYDWindow::DataSeries::setVisible(bool isVisible){
     line_series->setVisible(isVisible);
     check_box->setVisible(isVisible);
+    check_box->setChecked(isVisible);
 }
