@@ -43,13 +43,14 @@ SYDWindow::SYDWindow(QWidget *parent) : QWidget(parent){
 
     // Upload and save buttons
     QGroupBox* load_group = new QGroupBox(tr("Upload/Save Files"), this);
-    upload_button = new QPushButton("Upload File", this);
+    upload_button = new QPushButton("Upload b4m.txt", this);
     connect(upload_button, SIGNAL(clicked()), this, SLOT(getFileButtonClicked()));
     save_button = new QPushButton("Save Graph", this);
     connect(save_button, SIGNAL(clicked()), this, SLOT(saveFileButtonClicked()));
     upload_scour_button = new QPushButton("Upload TZMIN.OUT");
     connect(upload_scour_button, SIGNAL(clicked()), this, SLOT(getScourFileButtonClicked()));
     upload_scour_button->setEnabled(false);
+    save_button->setEnabled(false);
 
     QVBoxLayout* load_group_layout = new QVBoxLayout(this);
     load_group_layout->addWidget(upload_button);
@@ -110,6 +111,7 @@ void SYDWindow::getFileButtonClicked(){
         cs_radio->toggle();
         view_group->setEnabled(true);
         upload_scour_button->setEnabled(true);
+        save_button->setEnabled(true);
     }
 }
 
