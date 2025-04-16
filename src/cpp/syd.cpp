@@ -23,7 +23,9 @@ SYDWindow::SYDWindow(QWidget *parent) : QWidget(parent){
     chart_view->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
 
     axis_x = new QValueAxis();
+    axis_x->setTitleText("Station (ft)");
     axis_y = new QValueAxis();
+    axis_y->setTitleText("Elevation (ft)");
 
     /********************************************************
      * Control initialization
@@ -200,7 +202,9 @@ void SYDWindow::csSelectorChanged(const QString& text){
     }
 
     axis_x->setRange(min_x, max_x);
+    axis_x->setTitleText("Station (ft)");
     axis_y->setRange(min_y, max_y);
+    axis_y->setTitleText("Elevation (ft)");
 }
 
 void SYDWindow::sydSelectorChanged(const QString& text){
@@ -231,7 +235,9 @@ void SYDWindow::csToSyd(){
         y = std::max(y, std::max(peak, end));
     }
     axis_x->setRange(stof(hfile->sections[1]->getName()), stof(hfile->sections[hfile->sections.size()]->getName()));
+    axis_x->setTitleText("Section");
     axis_y->setRange(0, y);
+    axis_y->setTitleText("Sediment Yield (tons)");
 }
 
 void SYDWindow::sydToCs(){
@@ -248,6 +254,7 @@ void SYDWindow::sydToCs(){
     syd_end->setVisible(false);
     
     axis_x->setRange(min_x, max_x);
+    axis_x->setTitleText("Station (ft)");
     axis_y->setRange(min_y, max_y);
 }
 
