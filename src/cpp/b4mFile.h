@@ -1,5 +1,5 @@
-#ifndef HYDROGRAPH_H
-#define HYDROGRAPH_H
+#ifndef B4MFILE_H
+#define B4MFILE_H
 
 #include <string>
 #include <tuple>
@@ -14,13 +14,13 @@ class Crosssection{
             num_coor = cs_num_coor;
         }
 
-        inline void add_coor(float station, float elevation, std::string time){
+        inline void addCoor(float station, float elevation, std::string time){
             std::tuple<float, float> coor_pair(station, elevation);
             coordinates[time].push_back(coor_pair);
             return;
         }
 
-        inline void add_syd(std::string time, float syd_point){
+        inline void addSyd(std::string time, float syd_point){
             syd[time] = syd_point;
             return;
         }
@@ -29,19 +29,36 @@ class Crosssection{
             return syd[time];
         }
 
+        inline void addWsElev(std::string time, float ws_elev_point){
+            ws_elev[time] = ws_elev_point;
+        }
+        
+        inline const float getWsElev(std::string time){
+            return ws_elev[time];
+        }
+        
+        inline void addScour(float station, float elevation){
+            std::tuple<float,float> coor_pair(station,elevation);
+            scour.push_back(coor_pair);
+        }
+
+        inline const std::vector<std::tuple<float,float>> getScour(){
+            return scour;
+        }
+
         inline const std::vector<std::tuple<float,float>> get_coor(std::string time){
             return coordinates[time];
         }
 
-        inline const int get_num_coor(){
+        inline const int getNumCoor(){
             return num_coor;
         }
 
-        inline const int get_id(){
+        inline const int getId(){
             return id;
         }
 
-        inline const std::string get_name(){
+        inline const std::string getName(){
             return name;
         }
 
@@ -52,7 +69,8 @@ class Crosssection{
         // Key: time, Value: vector of coordinates @ time
         std::unordered_map<std::string,std::vector<std::tuple<float, float>>> coordinates;
         std::unordered_map<std::string,float> syd;
-        
+        std::unordered_map<std::string,float> ws_elev;
+        std::vector<std::tuple<float, float>> scour;
 };
 
 class HydrographFile{
@@ -60,10 +78,12 @@ class HydrographFile{
         HydrographFile(std::string file_path);
         ~HydrographFile();
 
+        void uploadScourFile(std::string file_path);
+
         // Key: crosssection ID, Value: crosssection object
         std::unordered_map<int, Crosssection*> sections;
-        std::string get_approx_peak();
-        std::string get_approx_end();
+        std::string getApproxPeak();
+        std::string getApproxEnd();
 
     private:
         /* 

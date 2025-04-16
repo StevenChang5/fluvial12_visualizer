@@ -1,27 +1,23 @@
-#ifndef SYD_H
-#define SYD_H
+#ifndef LSD_H
+#define LSD_H
 
 #include <QWidget>
-#include <QGroupBox>
 #include <QChartView>
 #include <QCheckBox>
-#include <QComboBox>
+#include <QGroupBox>
 #include <QLineSeries>
 #include <QPushButton>
-#include <QRadioButton>
-#include <QFormLayout>
-#include <QHBoxLayout>
-#include <QString>
 #include <QValueAxis>
+#include <QVBoxLayout>
 
-#include "b4mFile.h"
+#include "tyyFile.h"
 
-class SYDWindow : public QWidget{
+class LSDWindow : public QWidget{
     Q_OBJECT
     public:
-        explicit SYDWindow(QWidget *parent = 0);
+        explicit LSDWindow(QWidget* parent=0);
     private:
-        HydrographFile* hfile;
+        TYYFile* ty_file;
         QString fname;
         QString save_path;
 
@@ -37,16 +33,9 @@ class SYDWindow : public QWidget{
                 QCheckBox* check_box;
         };
 
-        DataSeries* output_init;
-        DataSeries* output_peak;
-        DataSeries* output_end;
-        DataSeries* output_ws;
-        DataSeries* syd_peak;
-        DataSeries* syd_end;
-        DataSeries* scour;
+        DataSeries* peak;
+        DataSeries* end;
 
-        bool scour_loaded;
-        
         // Chart
         QValueAxis* axis_x;
         QValueAxis* axis_y;
@@ -55,31 +44,15 @@ class SYDWindow : public QWidget{
         float max_y;
         float min_x;
         float max_x;
-        
-        // Control Group
-        QComboBox* cs_selector;
-        QRadioButton* cs_radio;
-        QRadioButton* syd_radio;
 
         // Upload/Download Group
         QPushButton* upload_button;
         QPushButton* save_button;
         QPushButton* upload_scour_button;
-        
-    signals:
-        void fileUploaded();
-        void displayScour();
-        
+
     private slots:
         void getFileButtonClicked();
-        void getScourFileButtonClicked();
         void saveFileButtonClicked();
-        void getFileUploaded();
-        void csSelectorChanged(const QString& text);
-        void sydSelectorChanged(const QString& text);
-        void csToSyd();
-        void sydToCs();
-        void displayScourReceived();
 };
 
 #endif

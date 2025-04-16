@@ -1,5 +1,5 @@
-#ifndef SYD_H
-#define SYD_H
+#ifndef LP_H
+#define LP_H
 
 #include <QWidget>
 #include <QGroupBox>
@@ -14,14 +14,14 @@
 #include <QString>
 #include <QValueAxis>
 
-#include "b4mFile.h"
+#include "tsumFile.h"
 
-class SYDWindow : public QWidget{
+class LPWindow : public QWidget{
     Q_OBJECT
     public:
-        explicit SYDWindow(QWidget *parent = 0);
+        explicit LPWindow(QWidget* parent=0);
     private:
-        HydrographFile* hfile;
+        TSUMFile* ts_file;
         QString fname;
         QString save_path;
 
@@ -37,16 +37,11 @@ class SYDWindow : public QWidget{
                 QCheckBox* check_box;
         };
 
-        DataSeries* output_init;
-        DataSeries* output_peak;
-        DataSeries* output_end;
-        DataSeries* output_ws;
-        DataSeries* syd_peak;
-        DataSeries* syd_end;
-        DataSeries* scour;
+        DataSeries* water_surface;
+        DataSeries* initial;
+        DataSeries* peak;
+        DataSeries* end;
 
-        bool scour_loaded;
-        
         // Chart
         QValueAxis* axis_x;
         QValueAxis* axis_y;
@@ -55,31 +50,15 @@ class SYDWindow : public QWidget{
         float max_y;
         float min_x;
         float max_x;
-        
-        // Control Group
-        QComboBox* cs_selector;
-        QRadioButton* cs_radio;
-        QRadioButton* syd_radio;
 
         // Upload/Download Group
         QPushButton* upload_button;
         QPushButton* save_button;
         QPushButton* upload_scour_button;
-        
-    signals:
-        void fileUploaded();
-        void displayScour();
-        
+
     private slots:
         void getFileButtonClicked();
-        void getScourFileButtonClicked();
         void saveFileButtonClicked();
-        void getFileUploaded();
-        void csSelectorChanged(const QString& text);
-        void sydSelectorChanged(const QString& text);
-        void csToSyd();
-        void sydToCs();
-        void displayScourReceived();
 };
 
 #endif
