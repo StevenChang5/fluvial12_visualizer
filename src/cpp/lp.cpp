@@ -12,10 +12,12 @@ LPWindow::LPWindow(QWidget* parent) : QWidget(parent){
     chart_view->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
 
     axis_x = new QValueAxis();
+    axis_x->setTitleText("Station (ft)");
     axis_y = new QValueAxis();
+    axis_y->setTitleText("Elevation (ft)");
 
     QGroupBox* load_group = new QGroupBox(tr("Upload/Save Files"), this);
-    upload_button = new QPushButton("Upload TYY", this);
+    upload_button = new QPushButton("Upload TSUM", this);
     connect(upload_button, SIGNAL(clicked()), this, SLOT(getFileButtonClicked()));
     save_button = new QPushButton("Save Graph", this);
     connect(save_button, SIGNAL(clicked()), this, SLOT(saveFileButtonClicked()));
