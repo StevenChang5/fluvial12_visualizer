@@ -4,7 +4,6 @@
 #include <cmath>
 #include <fstream>
 #include <iostream>
-#include <QDebug>
 
 using namespace std;
 
@@ -43,7 +42,7 @@ HydrographFile::HydrographFile(string file_path){
             }
             sections[id] = cs;
             id++;
-        }else if(split[0] == "ID\r"){
+        }else if(split[0].substr(0,2) == "ID"){
             int subrow = row + 1;
             vector<string> temp = split_string(lines[subrow]);
             int temp_id = stoi(temp[0]);
