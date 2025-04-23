@@ -1,3 +1,4 @@
+#include "float.h"
 #include "lp.h"
 
 #include <QFileDialog>
@@ -57,6 +58,10 @@ LPWindow::LPWindow(QWidget* parent) : QWidget(parent){
 
 void LPWindow::getFileButtonClicked(){
     fname = QFileDialog::getOpenFileName(this,"Select a file", "","TSUM File (*TSUM);;All Files (*)" );
+    min_x = FLT_MAX;
+    max_x = FLT_MIN;
+    min_y = FLT_MAX;
+    max_y = FLT_MIN;
     if(!fname.isEmpty()){
         ts_file = new TSUMFile(fname.toStdString());
         std::vector<std::tuple<float,float,float,float,float>> coors = ts_file->getCoordinates();

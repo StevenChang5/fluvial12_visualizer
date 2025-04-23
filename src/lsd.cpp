@@ -1,3 +1,4 @@
+#include "float.h"
 #include "lsd.h"
 
 #include <QFileDialog>
@@ -55,6 +56,10 @@ LSDWindow::LSDWindow(QWidget* parent) : QWidget(parent){
 
 void LSDWindow::getFileButtonClicked(){
     fname = QFileDialog::getOpenFileName(this,"Select a file", "","TYY File (*TYY);;All Files (*)" );
+    min_x = FLT_MAX;
+    max_x = FLT_MIN;
+    min_y = FLT_MAX;
+    max_y = FLT_MIN;
     if(!fname.isEmpty()){
         ty_file = new TYYFile(fname.toStdString());
         std::vector<std::tuple<float,float,float>> coors = ty_file->getCoordinates();
