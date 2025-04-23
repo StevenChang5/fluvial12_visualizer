@@ -45,7 +45,7 @@ SYDWindow::SYDWindow(QWidget *parent) : QWidget(parent){
 
     // Upload and save buttons
     QGroupBox* load_group = new QGroupBox(tr("Upload/Save Files"), this);
-    upload_button = new QPushButton("Upload b4m.txt", this);
+    upload_button = new QPushButton("Upload output .txt", this);
     connect(upload_button, SIGNAL(clicked()), this, SLOT(getFileButtonClicked()));
     save_button = new QPushButton("Save Graph", this);
     connect(save_button, SIGNAL(clicked()), this, SLOT(saveFileButtonClicked()));
