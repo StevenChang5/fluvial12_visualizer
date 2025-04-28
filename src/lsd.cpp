@@ -14,7 +14,9 @@ LSDWindow::LSDWindow(QWidget* parent) : QWidget(parent){
 
     axis_x = new QValueAxis();
     axis_x->setTitleText("Station (ft)");
+    axis_x->setTickCount(10);
     axis_y = new QValueAxis();
+    axis_y->setTickCount(10);
     axis_y->setTitleText("Elevation (ft)");
 
     QGroupBox* load_group = new QGroupBox(tr("Upload/Save Files"), this);
@@ -40,6 +42,7 @@ LSDWindow::LSDWindow(QWidget* parent) : QWidget(parent){
 
     chart_view->chart()->addAxis(axis_x, Qt::AlignBottom);
     chart_view->chart()->addAxis(axis_y, Qt::AlignLeft);
+    chart_view->chart()->setTitle(QString::fromStdString("Sediment Delivery"));
 
     peak = new DataSeries("Peak", chart_view, axis_x, axis_y, view_group_layout);
     end = new DataSeries("End", chart_view, axis_x, axis_y, view_group_layout);

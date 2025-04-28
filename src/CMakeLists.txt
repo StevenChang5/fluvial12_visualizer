@@ -6,19 +6,19 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 find_package(Qt6 COMPONENTS Widgets REQUIRED COMPONENTS Charts)
 
-qt6_wrap_cpp(MOC_SOURCES syd.h)
+qt6_wrap_cpp(MOC_SOURCES cs.h)
 qt6_wrap_cpp(MOC_SOURCES lsd.h)
 qt6_wrap_cpp(MOC_SOURCES lp.h)
 
 
 add_executable(main
     main.cpp
-    syd.cpp
+    cs.cpp
     lp.cpp
     lsd.cpp
     tyyFile.cpp
     tsumFile.cpp
-    b4mFile.cpp
+    outputFile.cpp
     ${MOC_SOURCES}
 )
 

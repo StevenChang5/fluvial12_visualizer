@@ -1,5 +1,5 @@
 #include "float.h"
-#include "syd.h"
+#include "cs.h"
 
 #include <filesystem>
 #include <format>
@@ -12,7 +12,7 @@
 
 #include <QDebug>
 
-SYDWindow::SYDWindow(QWidget *parent) : QWidget(parent){
+CSWindow::CSWindow(QWidget *parent) : QWidget(parent){
 
     QVBoxLayout *main_layout = new QVBoxLayout(this);
 
@@ -24,7 +24,9 @@ SYDWindow::SYDWindow(QWidget *parent) : QWidget(parent){
 
     axis_x = new QValueAxis();
     axis_x->setTitleText("Station (ft)");
+    axis_x->setTickCount(10);
     axis_y = new QValueAxis();
+    axis_y->setTickCount(10);
     axis_y->setTitleText("Elevation (ft)");
 
     /********************************************************
@@ -45,7 +47,7 @@ SYDWindow::SYDWindow(QWidget *parent) : QWidget(parent){
 
     // Upload and save buttons
     QGroupBox* load_group = new QGroupBox(tr("Upload/Save Files"), this);
-    upload_button = new QPushButton("Upload output .txt", this);
+    upload_button = new QPushButton("Upload output.txt", this);
     connect(upload_button, SIGNAL(clicked()), this, SLOT(getFileButtonClicked()));
     save_button = new QPushButton("Save Graph", this);
     connect(save_button, SIGNAL(clicked()), this, SLOT(saveFileButtonClicked()));
@@ -105,7 +107,7 @@ SYDWindow::SYDWindow(QWidget *parent) : QWidget(parent){
     main_layout->addLayout(viewer_layout);
 }
 
-void SYDWindow::getFileButtonClicked(){
+void CSWindow::getFileButtonClicked(){
     fname = QFileDialog::getOpenFileName(this,"Select a file", "","Text Files (*.txt);;All Files (*)" );
     if(!fname.isEmpty()){
         hfile = new HydrographFile(fname.toStdString());
@@ -117,7 +119,7 @@ void SYDWindow::getFileButtonClicked(){
     }
 }
 
-void SYDWindow::getScourFileButtonClicked(){
+void CSWindow::getScourFileButtonClicked(){
     fname = QFileDialog::getOpenFileName(this,"Select TZMIN.OUT","","Text Files (*.OUT);;All Files (*)");
     if(!fname.isEmpty()){
         hfile->uploadScourFile(fname.toStdString());
@@ -126,7 +128,7 @@ void SYDWindow::getScourFileButtonClicked(){
     }
 }
 
-void SYDWindow::saveFileButtonClicked(){
+void CSWindow::saveFileButtonClicked(){
     save_path = QFileDialog::getExistingDirectory(this,"Select a save directory");
     save_path += "/graph";
     QString new_save_path = save_path + ".png";
@@ -141,7 +143,7 @@ void SYDWindow::saveFileButtonClicked(){
     }
 }
 
-void SYDWindow::getFileUploaded(){
+void CSWindow::getFileUploaded(){
     cs_selector->setEnabled(true);
     for(int i = 1; i < hfile->sections.size(); i++){
         Crosssection* temp = hfile->sections[i];
@@ -149,7 +151,7 @@ void SYDWindow::getFileUploaded(){
     }
 }
 
-void SYDWindow::csSelectorChanged(const QString& text){
+void CSWindow::csSelectorChanged(const QString& text){
     std::string data = text.toStdString();
     int idx_left = data.find(' ')+1;
     int idx_right = data.find(',');
@@ -205,13 +207,14 @@ void SYDWindow::csSelectorChanged(const QString& text){
     axis_x->setTitleText("Station (ft)");
     axis_y->setRange(min_y, max_y);
     axis_y->setTitleText("Elevation (ft)");
+    chart_view->chart()->setTitle(QString::fromStdString(std::format("Cross Section #{}", id)));
 }
 
-void SYDWindow::sydSelectorChanged(const QString& text){
+void CSWindow::sydSelectorChanged(const QString& text){
     std::string data = text.toStdString();
 }
 
-void SYDWindow::csToSyd(){
+void CSWindow::csToSyd(){
     output_init->setVisible(false);
     output_peak->setVisible(false);
     output_end->setVisible(false);
@@ -233,14 +236,17 @@ void SYDWindow::csToSyd(){
         syd_peak->line_series->append(stof(cs->getName()),peak);
         syd_end->line_series->append(stof(cs->getName()),end);
         y = std::max(y, std::max(peak, end));
+        
     }
     axis_x->setRange(stof(hfile->sections[1]->getName()), stof(hfile->sections[hfile->sections.size()]->getName()));
     axis_x->setTitleText("Section");
     axis_y->setRange(0, y);
     axis_y->setTitleText("Sediment Yield (tons)");
+
+    chart_view->chart()->setTitle(QString::fromStdString("SYD"));
 }
 
-void SYDWindow::sydToCs(){
+void CSWindow::sydToCs(){
     cs_selector->setEnabled(true);
 
     output_init->setVisible(true);
@@ -256,9 +262,16 @@ void SYDWindow::sydToCs(){
     axis_x->setRange(min_x, max_x);
     axis_x->setTitleText("Station (ft)");
     axis_y->setRange(min_y, max_y);
+
+    std::string data = cs_selector->currentText().toStdString();
+    int idx_left = data.find(' ')+1;
+    int idx_right = data.find(',');
+    int id = stoi(data.substr(idx_left, idx_right-idx_left));
+    std::string title = std::format("Cross Section #{}", id);
+    chart_view->chart()->setTitle(QString::fromStdString(title));
 }
 
-void SYDWindow::displayScourReceived(){
+void CSWindow::displayScourReceived(){
     std::string data = cs_selector->currentText().toStdString();
     int idx_left = data.find(' ')+1;
     int idx_right = data.find(',');
@@ -282,7 +295,7 @@ void SYDWindow::displayScourReceived(){
     scour->setVisible(true);
 }
 
-SYDWindow::DataSeries::DataSeries(std::string name, QChartView* chart_view, QValueAxis* x, QValueAxis* y, QBoxLayout* layout, bool isVisible, QWidget* parent){
+CSWindow::DataSeries::DataSeries(std::string name, QChartView* chart_view, QValueAxis* x, QValueAxis* y, QBoxLayout* layout, bool isVisible, QWidget* parent){
     line_series = new QLineSeries();
     line_series->setName(QString::fromStdString(name));
     chart_view->chart()->addSeries(line_series);
@@ -300,7 +313,7 @@ SYDWindow::DataSeries::DataSeries(std::string name, QChartView* chart_view, QVal
     connect(check_box, &QCheckBox::toggled, line_series, [this](bool t){line_series->setVisible(t);});
 }
 
-void SYDWindow::DataSeries::setVisible(bool isVisible){
+void CSWindow::DataSeries::setVisible(bool isVisible){
     line_series->setVisible(isVisible);
     check_box->setVisible(isVisible);
     check_box->setChecked(isVisible);

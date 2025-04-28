@@ -1,5 +1,5 @@
-#ifndef SYD_H
-#define SYD_H
+#ifndef CS_H
+#define CS_H
 
 #include <QWidget>
 #include <QGroupBox>
@@ -14,12 +14,12 @@
 #include <QString>
 #include <QValueAxis>
 
-#include "b4mFile.h"
+#include "outputFile.h"
 
-class SYDWindow : public QWidget{
+class CSWindow : public QWidget{
     Q_OBJECT
     public:
-        explicit SYDWindow(QWidget *parent = 0);
+        explicit CSWindow(QWidget *parent = 0);
     private:
         HydrographFile* hfile;
         QString fname;

@@ -1,5 +1,5 @@
-#ifndef B4MFILE_H
-#define B4MFILE_H
+#ifndef OUTPUTFILE_H
+#define OUTPUTFILE_H
 
 #include <string>
 #include <tuple>

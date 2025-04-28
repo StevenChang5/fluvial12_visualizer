@@ -1,7 +1,7 @@
 #include <QApplication>
 #include <QTabWidget>
 #include <QMainWindow>
-#include "syd.h"
+#include "cs.h"
 #include "lp.h"
 #include "lsd.h"
 
@@ -12,9 +12,9 @@ int main(int argc, char** argv){
     window.setMinimumSize(800, 500);
 
     QTabWidget* tasks = new QTabWidget(&window);
-    SYDWindow* syd_window = new SYDWindow(tasks);
-    QString syd("Soild Yield Deposition");
-    tasks->addTab(syd_window, syd);
+    CSWindow* cs_window = new CSWindow(tasks);
+    QString cs("Cross Section");
+    tasks->addTab(cs_window, cs);
 
     LPWindow* lp_window = new LPWindow(tasks);
     QString lp("Longitudinal Profile");

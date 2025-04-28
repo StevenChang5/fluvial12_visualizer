@@ -14,7 +14,9 @@ LPWindow::LPWindow(QWidget* parent) : QWidget(parent){
 
     axis_x = new QValueAxis();
     axis_x->setTitleText("Station (ft)");
+    axis_x->setTickCount(10);
     axis_y = new QValueAxis();
+    axis_y->setTickCount(10);
     axis_y->setTitleText("Elevation (ft)");
 
     QGroupBox* load_group = new QGroupBox(tr("Upload/Save Files"), this);
@@ -117,6 +119,7 @@ LPWindow::DataSeries::DataSeries(std::string name, QChartView* chart_view, QValu
     line_series->attachAxis(y);
     line_series->setPointsVisible(isVisible);
     line_series->setVisible(isVisible);
+    chart_view->chart()->setTitle(QString::fromStdString("Longitudinal Profile"));
 
     check_box = new QCheckBox(QString::fromStdString(name),parent);
     check_box->setVisible(isVisible);

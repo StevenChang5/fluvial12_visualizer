@@ -1,4 +1,4 @@
-#include "b4mFile.h"
+#include "outputFile.h"
 #include "utils.h"
 
 #include <cmath>
